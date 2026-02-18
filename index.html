@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self';
+                   script-src 'self' https://cdn.jsdelivr.net;
+                   style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com;
+                   font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net;
+                   img-src 'self' data: https: blob:;
+                   connect-src 'self' https://cloud.umami.is;
+                   frame-ancestors 'none';
+                   base-uri 'self';
+                   form-action 'self';
+                   upgrade-insecure-requests;">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=(), bluetooth=()">
+
+    <!-- SEO & Social -->
+    <title>Pratik Anil Pawar — Information Security &amp; Cybersecurity Portfolio</title>
+    <meta name="description" content="Cybersecurity portfolio of Pratik Anil Pawar — CompTIA Security+ certified, SOC operations, DFIR, and blue team automation. Based in Mumbai, India.">
+    <meta name="keywords" content="Pratik Pawar, cybersecurity, information security, SOC analyst, blue team, DFIR, CompTIA Security+, portfolio, Mumbai">
+    <meta name="author" content="Pratik Anil Pawar">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Pratik Anil Pawar — Cybersecurity Portfolio">
+    <meta property="og:description" content="CompTIA Security+ certified cybersecurity professional. SOC operations, DFIR, and blue team automation.">
+    <meta property="og:image" content="Profile Photo.png">
+    <meta property="og:url" content="https://pratik-a-pawar.github.io/portfolio">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Pratik Anil Pawar — Cybersecurity Portfolio">
+    <meta name="twitter:description" content="CompTIA Security+ certified cybersecurity professional. SOC operations, DFIR, and blue team automation.">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Pratik Anil Pawar",
+        "jobTitle": "Information Security Engineer",
+        "url": "https://pratik-a-pawar.github.io/portfolio",
+        "sameAs": [
+            "https://www.linkedin.com/in/pratik-a-pawar/",
+            "https://github.com/Pratik-a-Pawar"
+        ],
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Mumbai",
+            "addressRegion": "Maharashtra",
+            "addressCountry": "India"
+        }
+    }
+    </script>
+
+    <!-- Favicon: SVG Shield -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%230a0e1a' stroke='%233b82f6' stroke-width='4'/><path d='M50 20 L70 35 V55 C70 70 50 80 50 80 C50 80 30 70 30 55 V35 Z' fill='none' stroke='%233b82f6' stroke-width='4' stroke-linejoin='round'/></svg>" type="image/svg+xml">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5.3.2 CSS with SRI -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+          crossorigin="anonymous">
+
+    <!-- Bootstrap Icons 1.11.1 with SRI -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+          rel="stylesheet"
+          integrity="sha384-4LISEZ5TG/ZnN4l8rMYVRPIu9AlO0pvJBc/fNFLVFCP1MkJPk+18FhVJME9/+q+j"
+          crossorigin="anonymous">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- ============================================
+         NAVBAR — Fixed, Glassmorphism
+    ============================================= -->
+    <nav class="navbar navbar-expand-lg fixed-top navbar-dark" id="mainNavbar">
+        <div class="container">
+            <a class="navbar-brand brand-logo" href="#hero">
+                <span class="brand-name">Pratik</span><span class="brand-dot">.infosec</span>
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav" aria-controls="navbarNav"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#skills">Skills</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#certifications">Certifications</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#projects">Projects</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#casefiles">Casefiles</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#experience">Experience</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#education">Education</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#blog">Blog</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+                    <li class="nav-item ms-lg-3">
+                        <button class="btn btn-link nav-link theme-toggle-btn p-1" id="themeToggle"
+                                aria-label="Toggle dark/light theme" title="Toggle theme">
+                            <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+
+        <!-- ============================================
+             SECTION 1: HERO
+        ============================================= -->
+        <section id="hero" class="hero-section d-flex align-items-center position-relative">
+            <!-- Animated Grid Background -->
+            <div class="hero-grid-bg" aria-hidden="true"></div>
+
+            <!-- SOC Dashboard Animation (decorative ambiance) -->
+            <div class="soc-dashboard-ambiance" aria-hidden="true">
+                <div class="soc-log-lines">
+                    <div class="log-line"><span class="log-time"></span> <span class="log-level log-info">INFO</span> Connection established from 192.168.1.45</div>
+                    <div class="log-line"><span class="log-time"></span> <span class="log-level log-warn">WARN</span> Failed login attempt — user: admin@corp.local</div>
+                    <div class="log-line"><span class="log-time"></span> <span class="log-level log-info">INFO</span> Firewall rule updated — outbound port 443</div>
+                    <div class="log-line"><span class="log-time"></span> <span class="log-level log-alert">ALERT</span> Suspicious DNS query: c2.malware.example.com</div>
+                    <div class="log-line"><span class="log-time"></span> <span class="log-level log-info">INFO</span> EDR scan completed — 0 threats detected</div>
+                    <div class="log-line"><span class="log-time"></span> <span class="log-level log-warn">WARN</span> Unusual outbound traffic volume detected</div>
+                    <div class="log-line"><span class="log-time"></span> <span class="log-level log-info">INFO</span> Patch deployment successful — 47 endpoints</div>
+                    <div class="log-line"><span class="log-time"></span> <span class="log-level log-alert">ALERT</span> Phishing email blocked — sender: spoofed@fake.com</div>
+                </div>
+            </div>
+
+            <div class="container position-relative hero-content-wrapper">
+                <div class="row align-items-center min-vh-100 pt-5">
+                    <!-- Left: Text Content -->
+                    <div class="col-lg-7 hero-content">
+                        <p class="hero-greeting scroll-reveal">Hello, I'm</p>
+                        <h1 class="hero-name scroll-reveal">Pratik Anil Pawar</h1>
+                        <div class="hero-subtitle-wrapper scroll-reveal">
+                            <span class="hero-subtitle-static">I'm a </span>
+                            <span class="hero-subtitle-typed" id="heroTyped"></span>
+                            <span class="typed-cursor" aria-hidden="true">|</span>
+                        </div>
+                        <p class="hero-description scroll-reveal">
+                            Cybersecurity fresher with CompTIA Security+ and Google Cybersecurity certifications.
+                            Hands-on experience in SIEM alert triage, phishing analysis, and incident response.
+                            Built an n8n-based phishing analyzer that cut manual triage effort by ~50%.
+                        </p>
+                        <div class="hero-cta scroll-reveal">
+                            <a href="#projects" class="btn btn-primary btn-cta me-3">
+                                <i class="bi bi-folder2-open me-2"></i>View Projects
+                            </a>
+                            <a href="#" class="btn btn-outline-amber btn-cta" id="viewResumeBtn">
+                                <i class="bi bi-file-earmark-text me-2"></i>View Resume
+                            </a>
+                        </div>
+                        <div class="hero-social scroll-reveal">
+                            <a href="https://www.linkedin.com/in/pratik-a-pawar/" target="_blank"
+                               rel="noopener noreferrer" aria-label="LinkedIn Profile" class="social-icon-link">
+                                <i class="bi bi-linkedin"></i>
+                            </a>
+                            <a href="https://github.com/Pratik-a-Pawar" target="_blank"
+                               rel="noopener noreferrer" aria-label="GitHub Profile" class="social-icon-link">
+                                <i class="bi bi-github"></i>
+                            </a>
+                            <a href="#contact" aria-label="Email Contact" class="social-icon-link">
+                                <i class="bi bi-envelope-fill"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Right: Profile Photo -->
+                    <div class="col-lg-5 text-center hero-photo-col scroll-reveal">
+                        <div class="hero-photo-wrapper">
+                            <div class="photo-ring ring-1" aria-hidden="true"></div>
+                            <div class="photo-ring ring-2" aria-hidden="true"></div>
+                            <div class="photo-ring ring-3" aria-hidden="true"></div>
+                            <div class="profile-photo-container protected-image" data-protected="true">
+                                <img src="Profile Photo.png"
+                                     alt="Pratik Anil Pawar — Cybersecurity Professional"
+                                     class="profile-photo"
+                                     loading="eager"
+                                     draggable="false"
+                                     width="320" height="320">
+                                <div class="photo-overlay" aria-hidden="true"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Scroll Down Indicator -->
+                <div class="scroll-indicator" aria-hidden="true">
+                    <div class="scroll-indicator-inner">
+                        <i class="bi bi-chevron-double-down"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             SECTION 2: HIRE ME IN 20 SECONDS
+        ============================================= -->
+        <section id="hire-me" class="section-padding hire-me-section">
+            <div class="container">
+                <div class="hire-me-card scroll-reveal">
+                    <div class="row align-items-center">
+                        <div class="col-lg-6 mb-4 mb-lg-0">
+                            <h2 class="section-label"><i class="bi bi-bullseye me-2"></i>Why Me?</h2>
+                            <ul class="hire-me-list">
+                                <li>
+                                    <i class="bi bi-shield-check"></i>
+                                    <span>CompTIA Security+ Certified (SY0-701)</span>
+                                </li>
+                                <li>
+                                    <i class="bi bi-gear-wide-connected"></i>
+                                    <span>Built automation that cut phishing triage time by ~50%</span>
+                                </li>
+                                <li>
+                                    <i class="bi bi-mortarboard"></i>
+                                    <span>9.47/10 CGPA — disciplined, fast learner</span>
+                                </li>
+                                <li>
+                                    <i class="bi bi-diagram-3"></i>
+                                    <span>MITRE ATT&amp;CK mapped thinking in every investigation</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-6">
+                            <h3 class="section-label"><i class="bi bi-tools me-2"></i>Core Tools</h3>
+                            <div class="core-tools-grid" id="coreToolsGrid">
+                                <!-- Rendered by JS -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-4">
+                        <a href="#projects" class="btn btn-outline-primary btn-cta">
+                            Want proof? <i class="bi bi-arrow-down-circle ms-2"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             SECTION 3: TERMINAL ABOUT ME
+        ============================================= -->
+        <section id="about" class="section-padding">
+            <div class="container">
+                <h2 class="section-heading scroll-reveal">
+                    <span class="heading-accent">//</span> About Me
+                </h2>
+                <div class="terminal-window scroll-reveal" id="terminalWindow">
+                    <div class="terminal-header">
+                        <span class="terminal-dot dot-red"></span>
+                        <span class="terminal-dot dot-yellow"></span>
+                        <span class="terminal-dot dot-green"></span>
+                        <span class="terminal-title">pratik@soc:~</span>
+                    </div>
+                    <div class="terminal-body" id="terminalBody">
+                        <div class="terminal-line">
+                            <span class="terminal-prompt">pratik@soc:~$</span>
+                            <span class="terminal-command" id="terminalCmd1"></span>
+                        </div>
+                        <div class="terminal-output hidden" id="terminalOutput">
+                            <br>
+                            <div class="terminal-row"><span class="terminal-key">Name:</span><span class="terminal-val">Pratik Anil Pawar</span></div>
+                            <div class="terminal-row"><span class="terminal-key">Location:</span><span class="terminal-val">Mumbai, Maharashtra, India</span></div>
+                            <div class="terminal-row"><span class="terminal-key">Education:</span><span class="terminal-val">B.Sc. Electronics — Solapur University (CGPA: 9.47/10)</span></div>
+                            <div class="terminal-row"><span class="terminal-key">Focus Areas:</span><span class="terminal-val">SOC Operations | Threat Analysis | DFIR | Blue Team Automation</span></div>
+                            <div class="terminal-row"><span class="terminal-key">Certifications:</span><span class="terminal-val">CompTIA Security+ | Google Cybersecurity | Cisco SOC</span></div>
+                            <div class="terminal-row"><span class="terminal-key">Currently:</span><span class="terminal-val">Seeking InfoSec Engineer / SOC Analyst L1 roles</span></div>
+                            <div class="terminal-row"><span class="terminal-key">Philosophy:</span><span class="terminal-val">"Integrity first. Evidence over opinions. Automate the boring stuff."</span></div>
+                            <br>
+                            <div class="terminal-line">
+                                <span class="terminal-prompt">pratik@soc:~$</span>
+                                <span class="terminal-command" id="terminalCmd2"></span>
+                            </div>
+                            <div class="terminal-status hidden" id="terminalStatus">
+                                <span class="terminal-status-text">Open to opportunities in Mumbai, Maharashtra, India</span>
+                            </div>
+                            <br>
+                            <div class="terminal-line hidden" id="terminalFinalPrompt">
+                                <span class="terminal-prompt">pratik@soc:~$</span>
+                                <span class="terminal-cursor-blink">_</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Accessible/SEO fallback text -->
+                <div class="about-text-fallback scroll-reveal">
+                    <p>
+                        Cybersecurity fresher (B.Sc. Electronics, CGPA 9.47) with CompTIA Security+ and
+                        Google Cybersecurity certifications. Hands-on experience in SIEM alert triage,
+                        phishing analysis, and incident response through LetsDefend and TryHackMe.
+                        Developed an n8n-based phishing analyzer automating IOC enrichment and threat
+                        classification, cutting manual triage effort by approximately 50%. Working knowledge
+                        of cloud security fundamentals (AWS/Azure) and scripting (Python, Bash, PowerShell).
+                        Seeking an InfoSec Engineer role to contribute to enterprise security operations,
+                        threat detection, and compliance in dynamic security environments.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             SECTION 4: SKILLS + RADAR CHART
+        ============================================= -->
+        <section id="skills" class="section-padding section-alt">
+            <div class="container">
+                <h2 class="section-heading scroll-reveal">
+                    <span class="heading-accent">//</span> Skills &amp; Expertise
+                </h2>
+                <div class="row">
+                    <div class="col-lg-5 mb-4 mb-lg-0 scroll-reveal">
+                        <div class="radar-chart-container">
+                            <canvas id="radarChart" width="400" height="400" aria-label="Skills radar chart showing proficiency across categories"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-lg-7">
+                        <div class="row" id="skillCardsContainer">
+                            <!-- Rendered by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             SECTION 5: MITRE ATT&CK HEATMAP
+        ============================================= -->
+        <section id="mitre" class="section-padding">
+            <div class="container">
+                <h2 class="section-heading scroll-reveal">
+                    <span class="heading-accent">//</span> MITRE ATT&amp;CK Exposure
+                </h2>
+                <p class="section-subheading scroll-reveal">
+                    Tactics and techniques I have hands-on exposure to through certifications, labs, and projects.
+                </p>
+                <div class="mitre-heatmap scroll-reveal" id="mitreHeatmap">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             SECTION 6: CERTIFICATIONS
+        ============================================= -->
+        <section id="certifications" class="section-padding section-alt">
+            <div class="container">
+                <h2 class="section-heading scroll-reveal">
+                    <span class="heading-accent">//</span> Certifications
+                </h2>
+                <div class="row" id="certificationsContainer">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             SECTION 7: PROJECTS
+        ============================================= -->
+        <section id="projects" class="section-padding">
+            <div class="container">
+                <h2 class="section-heading scroll-reveal">
+                    <span class="heading-accent">//</span> Projects
+                </h2>
+                <div id="projectsContainer">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             SECTION 8: CASEFILES
+        ============================================= -->
+        <section id="casefiles" class="section-padding section-alt">
+            <div class="container">
+                <h2 class="section-heading scroll-reveal">
+                    <span class="heading-accent">//</span> Investigation Casefiles
+                </h2>
+                <p class="section-subheading scroll-reveal">
+                    How I think through security incidents
+                </p>
+                <div class="row" id="casefilesContainer">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             SECTION 9: ALERT TRIAGE DEMO
+        ============================================= -->
+        <section id="triage-demo" class="section-padding">
+            <div class="container">
+                <h2 class="section-heading scroll-reveal">
+                    <span class="heading-accent">//</span> See How I Investigate
+                </h2>
+                <p class="section-subheading scroll-reveal">
+                    Walk through a simulated alert triage — step by step.
+                </p>
+                <div class="triage-demo-widget scroll-reveal">
+                    <div class="triage-steps" id="triageSteps">
+                        <!-- Rendered by JS -->
+                    </div>
+                    <div class="triage-controls text-center mt-4">
+                        <button class="btn btn-primary btn-cta" id="triageStartBtn">
+                            <i class="bi bi-play-circle me-2"></i>Start Investigation
+                        </button>
+                        <button class="btn btn-outline-secondary btn-cta ms-2 hidden" id="triageResetBtn">
+                            <i class="bi bi-arrow-counterclockwise me-2"></i>Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             SECTION 11: TRAINING & LAB EXPERIENCE
+        ============================================= -->
+        <section id="experience" class="section-padding section-alt">
+            <div class="container">
+                <h2 class="section-heading scroll-reveal">
+                    <span class="heading-accent">//</span> Training &amp; Lab Experience
+                </h2>
+                <div class="experience-timeline" id="experienceTimeline">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             SECTION 12: EDUCATION
+        ============================================= -->
+        <section id="education" class="section-padding">
+            <div class="container">
+                <h2 class="section-heading scroll-reveal">
+                    <span class="heading-accent">//</span> Education
+                </h2>
+                <div class="row" id="educationContainer">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             SECTION 13: ACHIEVEMENT
+        ============================================= -->
+        <section id="achievement" class="section-padding section-alt">
+            <div class="container">
+                <h2 class="section-heading scroll-reveal">
+                    <span class="heading-accent">//</span> Achievement
+                </h2>
+                <div class="row justify-content-center" id="achievementContainer">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             SECTION 14: BLOG / SECURITY WRITEUPS
+        ============================================= -->
+        <section id="blog" class="section-padding">
+            <div class="container">
+                <h2 class="section-heading scroll-reveal">
+                    <span class="heading-accent">//</span> Security Writeups
+                </h2>
+                <p class="section-subheading scroll-reveal">
+                    Research, incident analysis, and lessons learned
+                </p>
+                <div class="row" id="blogContainer">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             SECTION 15: CONTACT
+        ============================================= -->
+        <section id="contact" class="section-padding section-alt">
+            <div class="container">
+                <h2 class="section-heading scroll-reveal">
+                    <span class="heading-accent">//</span> Get In Touch
+                </h2>
+                <p class="section-subheading scroll-reveal">
+                    For privacy, contact details are masked. Click the eye icon to reveal temporarily.
+                </p>
+                <div class="row justify-content-center" id="contactContainer">
+                    <!-- Rendered by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Anti-scraping honeypot (hidden) -->
+        <div class="honeypot-container" aria-hidden="true">
+            <form>
+                <input type="email" name="email" tabindex="-1" autocomplete="off" value="do-not-contact@example.com">
+                <input type="text" name="phone" tabindex="-1" autocomplete="off" value="+1-555-0000">
+            </form>
+        </div>
+
+    </main>
+
+    <!-- ============================================
+         RESUME MODAL
+    ============================================= -->
+    <div class="modal fade" id="resumeModal" tabindex="-1" aria-labelledby="resumeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content resume-modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="resumeModalLabel">
+                        <i class="bi bi-file-earmark-text me-2"></i>Resume — Pratik Anil Pawar
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body protected-image" data-protected="true" id="resumeModalBody">
+                    <div class="resume-placeholder" id="resumePlaceholder">
+                        <i class="bi bi-file-earmark-lock2 resume-placeholder-icon"></i>
+                        <p>Resume will be displayed here once configured.</p>
+                        <p class="text-muted small">See <code>js/resume-data.js</code> for setup instructions.</p>
+                    </div>
+                    <div id="resumeContent" class="d-none"></div>
+                    <div class="resume-overlay" aria-hidden="true"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================
+         FOOTER
+    ============================================= -->
+    <footer class="site-footer">
+        <div class="container text-center">
+            <div class="footer-social mb-3">
+                <a href="https://www.linkedin.com/in/pratik-a-pawar/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                    <i class="bi bi-linkedin"></i>
+                </a>
+                <a href="https://github.com/Pratik-a-Pawar" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                    <i class="bi bi-github"></i>
+                </a>
+                <a href="#contact" aria-label="Email">
+                    <i class="bi bi-envelope-fill"></i>
+                </a>
+            </div>
+            <p class="footer-copy">&copy; 2025 Pratik Anil Pawar. Built with integrity.</p>
+            <p class="footer-meta">Security-hardened. No cookies. No tracking ads.</p>
+        </div>
+    </footer>
+
+    <!-- ============================================
+         BACK TO TOP BUTTON
+    ============================================= -->
+    <button class="back-to-top" id="backToTop" aria-label="Back to top" title="Back to top">
+        <i class="bi bi-arrow-up"></i>
+    </button>
+
+    <!-- Bootstrap 5.3.2 JS with SRI -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+            crossorigin="anonymous"></script>
+
+    <!-- Custom JS (load order matters) -->
+    <script src="js/resume-data.js"></script>
+    <script src="js/security.js"></script>
+    <script src="js/analytics.js"></script>
+    <script src="js/main.js"></script>
+
+</body>
+</html>
