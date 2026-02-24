@@ -238,18 +238,79 @@ body {
     border-radius: 1px;
 }
 
-.theme-toggle-btn {
-    color: var(--text-secondary) !important;
-    font-size: 1.1rem;
-    transition: color var(--transition-fast), transform var(--transition-fast);
-    background: none !important;
-    border: none !important;
+/* Theme Toggle Switch */
+.theme-toggle-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 50px;
+    padding: 4px 8px;
     cursor: pointer;
+    position: relative;
+    transition: all var(--transition-medium);
+    height: 32px;
 }
 
-.theme-toggle-btn:hover {
-    color: var(--accent-amber) !important;
-    transform: rotate(15deg);
+.theme-toggle-switch:hover {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 10px rgba(var(--accent-blue-rgb), 0.2);
+}
+
+.toggle-icon-sun,
+.toggle-icon-moon {
+    font-size: 0.8rem;
+    transition: color var(--transition-fast), opacity var(--transition-fast);
+    z-index: 2;
+    line-height: 1;
+}
+
+.toggle-icon-sun {
+    color: var(--text-tertiary);
+}
+
+.toggle-icon-moon {
+    color: var(--text-tertiary);
+}
+
+/* Dark mode active state */
+[data-theme="dark"] .toggle-icon-moon {
+    color: var(--accent-blue);
+}
+
+[data-theme="dark"] .toggle-icon-sun {
+    color: var(--text-tertiary);
+}
+
+/* Light mode active state */
+[data-theme="light"] .toggle-icon-sun {
+    color: var(--accent-amber);
+}
+
+[data-theme="light"] .toggle-icon-moon {
+    color: var(--text-tertiary);
+}
+
+.toggle-slider {
+    display: block;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--accent-blue);
+    transition: transform var(--transition-medium), background var(--transition-medium);
+    position: absolute;
+    left: 28px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="light"] .toggle-slider {
+    transform: translateX(20px);
+    background: var(--accent-amber);
+}
+
+[data-theme="light"] .theme-toggle-switch {
+    border-color: var(--border-color-light);
 }
 
 [data-theme="light"] #mainNavbar {
