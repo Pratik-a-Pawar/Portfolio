@@ -285,7 +285,7 @@ const CONTACT_INFO = [
         label: 'Location',
         icon: 'bi-geo-alt-fill',
         maskedValue: null,
-        fullValue: 'Mumbai, Maharashtra, India',
+        fullValue: 'Solapur, Maharashtra, India',
         isMasked: false,
         isLink: false
     }
