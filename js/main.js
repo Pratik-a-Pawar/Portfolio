@@ -297,30 +297,35 @@ const CONTACT_INFO = [
    ============================================ */
 
 document.addEventListener('DOMContentLoaded', function () {
-    initTheme();
-    renderCoreTools();
-    renderSkillCards();
-    renderRadarChart();
-    renderMitreHeatmap();
-    renderCertifications();
-    renderProjects();
-    renderCasefiles();
-    renderTriageSteps();
-    renderExperience();
-    renderEducation();
-    renderAchievement();
-    renderBlog();
-    renderContact();
-    initNavbarScroll();
-    initActiveNavLink();
-    initSmoothScroll();
-    initBackToTop();
-    initScrollReveal();
-    initHeroTyping();
-    initTerminalAnimation();
-    initTriageDemo();
-    initResumeViewer();
-    initConsoleEasterEgg();
+    var initFns = [
+        initTheme,
+        renderCoreTools,
+        renderSkillCards,
+        renderRadarChart,
+        renderMitreHeatmap,
+        renderCertifications,
+        renderProjects,
+        renderCasefiles,
+        renderTriageSteps,
+        renderExperience,
+        renderEducation,
+        renderAchievement,
+        renderBlog,
+        renderContact,
+        initNavbarScroll,
+        initActiveNavLink,
+        initSmoothScroll,
+        initBackToTop,
+        initScrollReveal,
+        initHeroTyping,
+        initTerminalAnimation,
+        initTriageDemo,
+        initResumeViewer,
+        initConsoleEasterEgg
+    ];
+    for (var i = 0; i < initFns.length; i++) {
+        try { initFns[i](); } catch (e) { console.error(initFns[i].name + ' failed:', e); }
+    }
 });
 
 
@@ -333,6 +338,7 @@ document.addEventListener('DOMContentLoaded', function () {
  */
 function initTheme() {
     var toggle = document.getElementById('themeToggle');
+    var icon = document.getElementById('themeIcon');
     var stored = localStorage.getItem('portfolio-theme');
 
     if (stored) {
@@ -341,25 +347,30 @@ function initTheme() {
         document.documentElement.setAttribute('data-theme', 'light');
     }
 
+    if (icon) updateThemeIcon(icon);
+
+    if (!toggle) return;
+
     toggle.addEventListener('click', function () {
         var current = document.documentElement.getAttribute('data-theme');
         var next = current === 'light' ? 'dark' : 'light';
-        var animClass = 'animate-to-' + next;
 
-        // Add animation class
-        toggle.classList.add(animClass);
-
-        // Switch theme mid-animation
+        // Animate: spin the button
+        toggle.classList.add('theme-spinning');
         setTimeout(function () {
             document.documentElement.setAttribute('data-theme', next);
             localStorage.setItem('portfolio-theme', next);
+            if (icon) updateThemeIcon(icon);
         }, 200);
-
-        // Clean up animation class
         setTimeout(function () {
-            toggle.classList.remove(animClass);
-        }, 600);
+            toggle.classList.remove('theme-spinning');
+        }, 500);
     });
+}
+
+function updateThemeIcon(icon) {
+    var theme = document.documentElement.getAttribute('data-theme');
+    icon.className = theme === 'light' ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
 }
 
 
