@@ -333,6 +333,7 @@ document.addEventListener('DOMContentLoaded', function () {
  */
 function initTheme() {
     var toggle = document.getElementById('themeToggle');
+    var icon = document.getElementById('themeIcon');
     var stored = localStorage.getItem('portfolio-theme');
 
     if (stored) {
@@ -341,12 +342,36 @@ function initTheme() {
         document.documentElement.setAttribute('data-theme', 'light');
     }
 
+    updateThemeIcon(icon);
+
     toggle.addEventListener('click', function () {
         var current = document.documentElement.getAttribute('data-theme');
         var next = current === 'light' ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', next);
-        localStorage.setItem('portfolio-theme', next);
+
+        // Trigger spin animation
+        toggle.classList.add('spin');
+
+        // Swap icon mid-animation (at the fade-out point)
+        setTimeout(function () {
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('portfolio-theme', next);
+            updateThemeIcon(icon);
+        }, 200);
+
+        // Remove animation class when done
+        setTimeout(function () {
+            toggle.classList.remove('spin');
+        }, 500);
     });
+}
+
+function updateThemeIcon(icon) {
+    var theme = document.documentElement.getAttribute('data-theme');
+    if (theme === 'light') {
+        icon.className = 'bi bi-sun-fill';
+    } else {
+        icon.className = 'bi bi-moon-stars-fill';
+    }
 }
 
 
