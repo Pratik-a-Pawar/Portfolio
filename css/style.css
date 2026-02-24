@@ -284,13 +284,33 @@ body {
 
 /* --- CSS Moon (crescent via box-shadow) --- */
 .moon-shape {
-    width: 15px;
-    height: 15px;
+    width: 14px;
+    height: 14px;
     border-radius: 50%;
     background: transparent;
-    box-shadow: 5px -2px 0 0 var(--text-secondary);
+    box-shadow: 6px -1px 0 0 #d4d4d8;
     opacity: 1;
-    transform: rotate(-25deg) scale(1);
+    transform: rotate(-15deg) scale(1);
+    top: 2px;
+    left: 1px;
+}
+
+/* Moon glow on hover */
+.theme-toggle-btn:not([data-theme="light"] *):hover .moon-shape {
+    box-shadow: 6px -1px 0 0 #e4e4e7, 6px -1px 8px 2px rgba(212, 212, 216, 0.3);
+}
+
+/* Moon gentle rock animation on hover in dark mode */
+html:not([data-theme="light"]) .theme-toggle-btn:hover .moon-shape {
+    animation: moonRock 2s ease-in-out infinite;
+}
+
+@keyframes moonRock {
+    0%   { transform: rotate(-15deg) scale(1); }
+    25%  { transform: rotate(-5deg) scale(1.05); }
+    50%  { transform: rotate(-20deg) scale(1); }
+    75%  { transform: rotate(-10deg) scale(1.05); }
+    100% { transform: rotate(-15deg) scale(1); }
 }
 
 /* --- CSS Sun (circle + rays via box-shadow) --- */
