@@ -338,7 +338,6 @@ document.addEventListener('DOMContentLoaded', function () {
  */
 function initTheme() {
     var toggle = document.getElementById('themeToggle');
-    var icon = document.getElementById('themeIcon');
     var stored = localStorage.getItem('portfolio-theme');
 
     if (stored) {
@@ -347,22 +346,19 @@ function initTheme() {
         document.documentElement.setAttribute('data-theme', 'light');
     }
 
-    if (icon) updateThemeIcon(icon);
-
     if (!toggle) return;
 
     toggle.addEventListener('click', function () {
         var current = document.documentElement.getAttribute('data-theme');
         var next = current === 'light' ? 'dark' : 'light';
 
-        // Animate: glow pulse on button + spin-morph the icon
+        // Animate: glow pulse on button + spin-morph the shapes
         toggle.classList.add('theme-spinning');
 
-        // Swap theme + icon at the midpoint when icon is invisible
+        // Swap theme at the midpoint when shapes are invisible
         setTimeout(function () {
             document.documentElement.setAttribute('data-theme', next);
             localStorage.setItem('portfolio-theme', next);
-            if (icon) updateThemeIcon(icon);
         }, 250);
 
         // Remove animation class after completion
@@ -370,11 +366,6 @@ function initTheme() {
             toggle.classList.remove('theme-spinning');
         }, 600);
     });
-}
-
-function updateThemeIcon(icon) {
-    var theme = document.documentElement.getAttribute('data-theme');
-    icon.className = theme === 'light' ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
 }
 
 
