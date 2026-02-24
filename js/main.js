@@ -355,16 +355,20 @@ function initTheme() {
         var current = document.documentElement.getAttribute('data-theme');
         var next = current === 'light' ? 'dark' : 'light';
 
-        // Animate: spin the button
+        // Animate: glow pulse on button + spin-morph the icon
         toggle.classList.add('theme-spinning');
+
+        // Swap theme + icon at the midpoint when icon is invisible
         setTimeout(function () {
             document.documentElement.setAttribute('data-theme', next);
             localStorage.setItem('portfolio-theme', next);
             if (icon) updateThemeIcon(icon);
-        }, 200);
+        }, 250);
+
+        // Remove animation class after completion
         setTimeout(function () {
             toggle.classList.remove('theme-spinning');
-        }, 500);
+        }, 600);
     });
 }
 
