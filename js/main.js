@@ -323,6 +323,7 @@ document.addEventListener('DOMContentLoaded', function () {
         initResumeViewer,
         initConsoleEasterEgg,
         initCursorParticles,
+        initCursorGlow,
         initSocialIconEffects,
         initMagneticTilt
     ];
@@ -1375,6 +1376,93 @@ function initCursorParticles() {
 
     loop();
 }
+
+/* ============================================
+   CURSOR GLOW EFFECT
+   ============================================ */
+
+/**
+ * Creates a soft glowing dot + ring that follows the cursor.
+ * The glow expands when hovering over interactive elements (links, buttons, cards)
+ * giving a sleek, cybersecurity-dashboard feel without being over-the-top.
+ */
+function initCursorGlow() {
+    // Skip on touch-only devices
+    if (window.matchMedia && window.matchMedia('(pointer: coarse) and (hover: none)').matches) {
+        return;
+    }
+
+    // Create glow elements
+    var glow = document.createElement('div');
+    glow.className = 'cursor-glow';
+    document.body.appendChild(glow);
+
+    var ring = document.createElement('div');
+    ring.className = 'cursor-glow-ring';
+    document.body.appendChild(ring);
+
+    var mouseX = -100;
+    var mouseY = -100;
+    var glowX = -100;
+    var glowY = -100;
+    var ringX = -100;
+    var ringY = -100;
+
+    // Interactive selectors that trigger the "expand" effect
+    var interactiveSelectors = 'a, button, .btn, .social-icon-link, .project-card, .cert-card, .casefile-card, .blog-card, .contact-card, .nav-link, .theme-toggle-btn, input, textarea';
+
+    document.addEventListener('mousemove', function (e) {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+
+        // Show glow after first mouse move
+        if (!glow.classList.contains('visible')) {
+            glow.classList.add('visible');
+            ring.classList.add('visible');
+        }
+
+        // Check if hovering over interactive element
+        var target = e.target;
+        var isInteractive = target.closest(interactiveSelectors);
+
+        if (isInteractive) {
+            glow.classList.add('hovering-interactive');
+            ring.classList.add('hovering-interactive');
+        } else {
+            glow.classList.remove('hovering-interactive');
+            ring.classList.remove('hovering-interactive');
+        }
+    });
+
+    document.addEventListener('mouseleave', function () {
+        glow.classList.remove('visible');
+        ring.classList.remove('visible');
+    });
+
+    document.addEventListener('mouseenter', function () {
+        glow.classList.add('visible');
+        ring.classList.add('visible');
+    });
+
+    // Smooth follow using lerp (linear interpolation)
+    // Glow dot follows tightly, ring follows with more lag = parallax feel
+    function animate() {
+        glowX += (mouseX - glowX) * 0.2;
+        glowY += (mouseY - glowY) * 0.2;
+        ringX += (mouseX - ringX) * 0.08;
+        ringY += (mouseY - ringY) * 0.08;
+
+        glow.style.left = glowX + 'px';
+        glow.style.top = glowY + 'px';
+        ring.style.left = ringX + 'px';
+        ring.style.top = ringY + 'px';
+
+        requestAnimationFrame(animate);
+    }
+
+    animate();
+}
+
 
 /* ============================================
    SOCIAL ICON CLICK EFFECTS
