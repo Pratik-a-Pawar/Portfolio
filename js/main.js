@@ -321,7 +321,8 @@ document.addEventListener('DOMContentLoaded', function () {
         initTerminalAnimation,
         initTriageDemo,
         initResumeViewer,
-        initConsoleEasterEgg
+        initConsoleEasterEgg,
+        initCursorParticles
     ];
     for (var i = 0; i < initFns.length; i++) {
         try { initFns[i](); } catch (e) { console.error(initFns[i].name + ' failed:', e); }
@@ -1234,4 +1235,141 @@ function escapeHtml(str) {
     var div = document.createElement('div');
     div.appendChild(document.createTextNode(str));
     return div.innerHTML;
+}
+
+
+/* ============================================
+   CURSOR PARTICLE TRAIL — Cyber Network Effect
+   ============================================ */
+
+/**
+ * Initializes a canvas-based particle system that responds to mouse movement.
+ * Particles spawn near the cursor, drift outward, and form brief network
+ * connections with nearby particles — giving a "data flow" cybersecurity feel.
+ */
+function initCursorParticles() {
+    var canvas = document.getElementById('cursorParticles');
+    if (!canvas || !canvas.getContext) return;
+
+    // Skip on touch-only devices (no hover capability)
+    if (window.matchMedia && window.matchMedia('(hover: none)').matches) {
+        canvas.style.display = 'none';
+        return;
+    }
+
+    var ctx = canvas.getContext('2d');
+    var particles = [];
+    var mouseX = -9999;
+    var mouseY = -9999;
+    var isHovering = false;
+    var animId = null;
+    var MAX_PARTICLES = 80;
+    var CONNECT_DIST = 120;
+    var SPAWN_RATE = 3; // particles per frame while moving
+
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    // Track mouse position
+    document.addEventListener('mousemove', function (e) {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        isHovering = true;
+        spawnParticles();
+    });
+
+    document.addEventListener('mouseleave', function () {
+        isHovering = false;
+        mouseX = -9999;
+        mouseY = -9999;
+    });
+
+    function spawnParticles() {
+        if (!isHovering) return;
+        var isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+        for (var i = 0; i < SPAWN_RATE; i++) {
+            if (particles.length >= MAX_PARTICLES) break;
+            var angle = Math.random() * Math.PI * 2;
+            var speed = 0.5 + Math.random() * 1.5;
+            var isAmber = Math.random() < 0.2; // 20% amber sparks
+            particles.push({
+                x: mouseX + (Math.random() - 0.5) * 10,
+                y: mouseY + (Math.random() - 0.5) * 10,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed,
+                life: 1.0,
+                decay: 0.008 + Math.random() * 0.012,
+                size: 1.5 + Math.random() * 2.5,
+                color: isAmber
+                    ? (isDark ? '245, 158, 11' : '217, 119, 6')    // amber
+                    : (isDark ? '59, 130, 246' : '37, 99, 235')    // blue
+            });
+        }
+    }
+
+    function update() {
+        for (var i = particles.length - 1; i >= 0; i--) {
+            var p = particles[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vx *= 0.99;
+            p.vy *= 0.99;
+            p.life -= p.decay;
+            if (p.life <= 0) {
+                particles.splice(i, 1);
+            }
+        }
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw connections between nearby particles
+        for (var i = 0; i < particles.length; i++) {
+            for (var j = i + 1; j < particles.length; j++) {
+                var dx = particles[i].x - particles[j].x;
+                var dy = particles[i].y - particles[j].y;
+                var dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist < CONNECT_DIST) {
+                    var alpha = (1 - dist / CONNECT_DIST) * Math.min(particles[i].life, particles[j].life) * 0.3;
+                    ctx.beginPath();
+                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(particles[j].x, particles[j].y);
+                    ctx.strokeStyle = 'rgba(' + particles[i].color + ', ' + alpha + ')';
+                    ctx.lineWidth = 0.5;
+                    ctx.stroke();
+                }
+            }
+        }
+
+        // Draw particles
+        for (var i = 0; i < particles.length; i++) {
+            var p = particles[i];
+            var alpha = p.life * 0.8;
+
+            // Glow
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size * 3, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(' + p.color + ', ' + (alpha * 0.1) + ')';
+            ctx.fill();
+
+            // Core
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(' + p.color + ', ' + alpha + ')';
+            ctx.fill();
+        }
+    }
+
+    function loop() {
+        update();
+        draw();
+        animId = requestAnimationFrame(loop);
+    }
+
+    loop();
 }
