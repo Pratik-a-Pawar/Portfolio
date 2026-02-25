@@ -2119,31 +2119,6 @@ html:not([data-theme="light"]) .theme-toggle-btn:hover .moon-shape {
     transform: scale(1) translateY(0);
 }
 
-/* The two icons sit on top of each other inside the button */
-.eye-icon-wrap {
-    position: relative;
-    width: 1em;
-    height: 1em;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.eye-icon-closed,
-.eye-icon-open {
-    position: absolute;
-    transition: opacity 0.22s ease, transform 0.22s ease;
-    line-height: 1;
-}
-
-/* Default: show closed eye, hide open eye */
-.eye-icon-closed { opacity: 1; transform: scale(1); }
-.eye-icon-open   { opacity: 0; transform: scale(0.4); }
-
-/* When .eye-open is on the button: flip which icon shows */
-.eye-reveal-btn.eye-open .eye-icon-closed { opacity: 0; transform: scale(0.4); }
-.eye-reveal-btn.eye-open .eye-icon-open   { opacity: 1; transform: scale(1); }
-
 /* ── EYE ANIMATIONS ──────────────────────────────────────── */
 
 /* Opening burst: scale up → overshoot → settle + electric glow radiates */
