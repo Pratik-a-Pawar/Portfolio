@@ -499,7 +499,7 @@
                     <span class="heading-accent">//</span> Get In Touch
                 </h2>
                 <p class="section-subheading scroll-reveal">
-                    For privacy, contact details are masked. Click the eye icon to reveal temporarily.
+                    For privacy, contact details are masked.
                 </p>
                 <div class="row justify-content-center" id="contactContainer">
                     <!-- Rendered by JS -->
@@ -550,18 +550,30 @@
             <div class="footer-social mb-3">
                 <a href="https://www.linkedin.com/in/pratik-a-pawar/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="social-linkedin">
                     <img src="Logos/LinkedIn.png" alt="LinkedIn" class="social-logo" width="20" height="20">
+                    <span class="social-ripple"></span>
                 </a>
                 <a href="https://github.com/Pratik-a-Pawar" target="_blank" rel="noopener noreferrer" aria-label="GitHub" class="social-github">
                     <img src="Logos/GitHub.png" alt="GitHub" class="social-logo" width="20" height="20">
+                    <span class="social-ripple"></span>
                 </a>
                 <a href="#contact" aria-label="Email" class="social-contact">
                     <img src="Logos/Contact.png" alt="Contact" class="social-logo" width="20" height="20">
+                    <span class="social-ripple"></span>
                 </a>
             </div>
             <p class="footer-copy">&copy; 2026 Pratik Anil Pawar. Built with integrity.</p>
             <p class="footer-meta">Security-hardened. No cookies. No tracking ads.</p>
         </div>
     </footer>
+    
+    <!-- Cyber Scroll Progress Indicator -->
+    <div class="scroll-progress-track" aria-hidden="true">
+        <div class="scroll-progress-fill" id="scrollProgressFill"></div>
+        <div class="scroll-progress-glow" id="scrollProgressGlow"></div>
+    </div>
+
+    <!-- Scroll Particle Canvas -->
+    <canvas id="scrollParticleCanvas" aria-hidden="true"></canvas>
 
     <!-- ============================================
          BACK TO TOP BUTTON

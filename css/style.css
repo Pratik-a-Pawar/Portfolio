@@ -259,6 +259,7 @@ body {
     margin-bottom: 1rem;
     color: var(--text-primary);
     text-align: center;
+    position: relative;
 }
 
 .heading-accent {
@@ -286,17 +287,87 @@ body {
 /* ---- Scroll Reveal ---- */
 .scroll-reveal {
     opacity: 0;
-    transform: translateY(40px);
-    transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                filter 0.7s ease;
-    filter: blur(4px);
+    transform: translateY(50px);
+    transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                filter 0.8s ease;
+    filter: blur(6px);
+    will-change: opacity, transform, filter;
 }
 
 .scroll-reveal.revealed {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) translateX(0);
     filter: blur(0);
+}
+
+/* Direction-aware reveals — set via JS data-reveal-dir */
+.scroll-reveal[data-reveal-dir="left"] {
+    transform: translateX(-60px) translateY(20px);
+}
+.scroll-reveal[data-reveal-dir="right"] {
+    transform: translateX(60px) translateY(20px);
+}
+.scroll-reveal[data-reveal-dir="up"] {
+    transform: translateY(50px);
+}
+.scroll-reveal[data-reveal-dir="scale"] {
+    transform: scale(0.85);
+}
+
+/* Stagger delays for elements within the same section */
+.scroll-reveal[data-reveal-delay="1"] { transition-delay: 0.08s; }
+.scroll-reveal[data-reveal-delay="2"] { transition-delay: 0.16s; }
+.scroll-reveal[data-reveal-delay="3"] { transition-delay: 0.24s; }
+.scroll-reveal[data-reveal-delay="4"] { transition-delay: 0.32s; }
+.scroll-reveal[data-reveal-delay="5"] { transition-delay: 0.40s; }
+.scroll-reveal[data-reveal-delay="6"] { transition-delay: 0.48s; }
+.scroll-reveal[data-reveal-delay="7"] { transition-delay: 0.56s; }
+.scroll-reveal[data-reveal-delay="8"] { transition-delay: 0.64s; }
+
+/* Cyber scanner flash on reveal */
+.scroll-reveal.revealed.scanner-flash {
+    animation: cyberScannerFlash 0.6s ease-out;
+}
+
+@keyframes cyberScannerFlash {
+    0% {
+        box-shadow: inset 0 0 0 0 rgba(56, 189, 248, 0);
+    }
+    30% {
+        box-shadow: inset 0 2px 0 0 rgba(56, 189, 248, 0.6),
+                    0 0 20px rgba(56, 189, 248, 0.15);
+    }
+    100% {
+        box-shadow: inset 0 0 0 0 rgba(56, 189, 248, 0),
+                    0 0 0 rgba(56, 189, 248, 0);
+    }
+}
+
+/* Section headings get a special sweep-in line */
+.section-heading.scroll-reveal.revealed::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
+    animation: headingSweep 0.8s ease-out 0.3s both;
+}
+
+@keyframes headingSweep {
+    0% {
+        transform: scaleX(0);
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        transform: scaleX(1);
+        opacity: 0;
+    }
 }
 
 /* Cards get a slight scale entrance too */
@@ -2008,6 +2079,14 @@ html:not([data-theme="light"]) .theme-toggle-btn:hover .moon-shape {
     font-weight: 600;
 }
 
+/* Clickable cards without displayValue — make label the primary text */
+.contact-card-clickable .contact-card-label {
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    margin-bottom: 0;
+    letter-spacing: 0.8px;
+}
+
 .contact-card-value {
     font-size: 0.92rem;
     color: var(--text-primary);
@@ -2118,6 +2197,7 @@ html:not([data-theme="light"]) .theme-toggle-btn:hover .moon-shape {
 }
 
 .footer-social a {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -2130,6 +2210,55 @@ html:not([data-theme="light"]) .theme-toggle-btn:hover .moon-shape {
     transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     text-decoration: none;
     border: 1px solid var(--border-color);
+    z-index: 1;
+    overflow: visible;
+}
+
+/* Glow ring behind footer social icons — mirrors hero style */
+.footer-social a::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    background: transparent;
+    opacity: 0;
+    z-index: 0;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    transform: scale(0.8);
+}
+.footer-social a:hover::before {
+    opacity: 1;
+    transform: scale(1);
+}
+.footer-social a.social-linkedin::before {
+    background: radial-gradient(circle, rgba(0, 119, 181, 0.3), transparent 70%);
+}
+.footer-social a.social-github::before {
+    background: radial-gradient(circle, rgba(110, 84, 148, 0.3), transparent 70%);
+}
+.footer-social a.social-contact::before {
+    background: radial-gradient(circle, rgba(var(--accent-amber-rgb), 0.3), transparent 70%);
+}
+
+/* Ripple element inside footer social buttons */
+.footer-social a .social-ripple {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(0);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+.footer-social a.clicked .social-ripple {
+    animation: socialRippleOut 0.6s ease-out forwards;
+}
+
+/* Logo z-index above ripple */
+.footer-social a .social-logo {
+    position: relative;
+    z-index: 3;
 }
 
 .footer-social a:hover {
@@ -2142,17 +2271,26 @@ html:not([data-theme="light"]) .theme-toggle-btn:hover .moon-shape {
     color: #ffffff;
     box-shadow: 0 4px 18px rgba(0, 119, 181, 0.4);
 }
+.footer-social a.social-linkedin:hover .social-logo {
+    filter: brightness(10) drop-shadow(0 0 4px rgba(255, 255, 255, 0.4));
+}
 
 .footer-social a.social-github:hover {
     background: #6e5494;
     color: #ffffff;
     box-shadow: 0 4px 18px rgba(110, 84, 148, 0.4);
 }
+.footer-social a.social-github:hover .social-logo {
+    filter: brightness(10) drop-shadow(0 0 4px rgba(255, 255, 255, 0.4));
+}
 
 .footer-social a.social-contact:hover {
     background: var(--accent-amber);
     color: #0a0e1a;
     box-shadow: 0 4px 18px rgba(var(--accent-amber-rgb), 0.4);
+}
+.footer-social a.social-contact:hover .social-logo {
+    filter: brightness(0) drop-shadow(0 0 4px rgba(0, 0, 0, 0.2));
 }
 
 .footer-social a:hover i,
@@ -2349,6 +2487,133 @@ html:not([data-theme="light"]) .theme-toggle-btn:hover .moon-shape {
 
 .btn-cta:hover::after {
     opacity: 1;
+}
+
+/* ============================================
+   CYBER SCROLL PROGRESS INDICATOR
+   ============================================ */
+.scroll-progress-track {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: transparent;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.scroll-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg,
+        var(--accent-blue),
+        #38bdf8,
+        var(--accent-amber),
+        #38bdf8,
+        var(--accent-blue));
+    background-size: 300% 100%;
+    animation: progressGradientShift 3s linear infinite;
+    transition: width 0.15s ease-out;
+    border-radius: 0 2px 2px 0;
+}
+
+.scroll-progress-glow {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 80px;
+    height: 3px;
+    background: radial-gradient(ellipse at right, rgba(56, 189, 248, 0.8), transparent);
+    filter: blur(4px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.scroll-progress-track.active .scroll-progress-glow {
+    opacity: 1;
+}
+
+@keyframes progressGradientShift {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 300% 50%; }
+}
+
+/* ============================================
+   SCROLL PARTICLE CANVAS
+   ============================================ */
+#scrollParticleCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9998;
+    opacity: 0.6;
+}
+
+/* ============================================
+   SECTION REVEAL GLOW (scan line across section)
+   ============================================ */
+section.section-padding {
+    position: relative;
+    overflow: hidden;
+}
+
+section.section-padding::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(56, 189, 248, 0.5) 40%,
+        rgba(56, 189, 248, 0.8) 50%,
+        rgba(56, 189, 248, 0.5) 60%,
+        transparent 100%);
+    pointer-events: none;
+    z-index: 10;
+    opacity: 0;
+    transition: none;
+}
+
+section.section-padding.scan-active::before {
+    animation: sectionScanLine 1s ease-out forwards;
+}
+
+@keyframes sectionScanLine {
+    0% {
+        left: -100%;
+        opacity: 1;
+    }
+    70% {
+        opacity: 1;
+    }
+    100% {
+        left: 100%;
+        opacity: 0;
+    }
+}
+
+/* Subtle ambient glow when section enters view */
+section.section-padding.glow-active {
+    animation: sectionAmbientGlow 1.5s ease-out;
+}
+
+@keyframes sectionAmbientGlow {
+    0% {
+        box-shadow: inset 0 0 0 rgba(56, 189, 248, 0);
+    }
+    20% {
+        box-shadow: inset 0 0 60px rgba(56, 189, 248, 0.03);
+    }
+    100% {
+        box-shadow: inset 0 0 0 rgba(56, 189, 248, 0);
+    }
 }
 
 @media print {
@@ -2553,5 +2818,35 @@ html:not([data-theme="light"]) .theme-toggle-btn:hover .moon-shape {
 
     .scroll-indicator {
         display: none;
+    }
+}
+
+/* ============================================
+   REDUCED MOTION — Accessibility
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+    .scroll-reveal {
+        opacity: 1 !important;
+        transform: none !important;
+        filter: none !important;
+        transition: none !important;
+    }
+    .scroll-reveal.revealed.scanner-flash {
+        animation: none !important;
+    }
+    section.section-padding::before {
+        display: none !important;
+    }
+    section.section-padding.glow-active {
+        animation: none !important;
+    }
+    .scroll-progress-fill {
+        animation: none !important;
+    }
+    #scrollParticleCanvas {
+        display: none !important;
+    }
+    .section-heading.scroll-reveal.revealed::after {
+        animation: none !important;
     }
 }

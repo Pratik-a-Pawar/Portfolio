@@ -255,7 +255,7 @@ const CONTACT_INFO = [
     {
         label: 'Email',
         icon: 'bi-envelope-fill',
-        displayValue: 'Click to email me',
+        displayValue: '',
         clickUrl: 'mailto:pawar.pratik@hotmail.com',
         isClickable: true,
         openInNewTab: false
@@ -263,7 +263,7 @@ const CONTACT_INFO = [
     {
         label: 'LinkedIn',
         icon: 'bi-linkedin',
-        displayValue: 'Connect with me',
+        displayValue: '',
         clickUrl: 'https://www.linkedin.com/in/pratik-a-pawar/',
         isClickable: true,
         openInNewTab: true
@@ -271,7 +271,7 @@ const CONTACT_INFO = [
     {
         label: 'GitHub',
         icon: 'bi-github',
-        displayValue: 'View my projects',
+        displayValue: '',
         clickUrl: 'https://github.com/Pratik-a-Pawar',
         isClickable: true,
         openInNewTab: true
@@ -310,6 +310,9 @@ document.addEventListener('DOMContentLoaded', function () {
         initSmoothScroll,
         initBackToTop,
         initScrollReveal,
+        initSectionScanEffect,
+        initScrollProgress,
+        initScrollParticles,
         initHeroTyping,
         initTerminalAnimation,
         initTriageDemo,
@@ -666,9 +669,13 @@ function renderContact() {
 
         html += '<div class="contact-card-icon"><i class="bi ' + info.icon + '"></i></div>';
         html += '<div class="contact-card-label">' + escapeHtml(info.label) + '</div>';
-        html += '<div class="contact-card-value">';
-        html += '<span>' + escapeHtml(info.displayValue) + '</span>';
-        html += '</div>';
+
+        /* Only show value row if there's a displayValue (Location card etc.) */
+        if (info.displayValue) {
+            html += '<div class="contact-card-value">';
+            html += '<span>' + escapeHtml(info.displayValue) + '</span>';
+            html += '</div>';
+        }
 
         if (info.isClickable) {
             html += '</a>';
@@ -777,7 +784,7 @@ function initBackToTop() {
     });
 }
 
-/** Scroll-reveal using IntersectionObserver */
+/** Enhanced Scroll-reveal — direction-aware, staggered, with cyber scanner flash */
 function initScrollReveal() {
     var elements = document.querySelectorAll('.scroll-reveal');
     if (!elements.length) return;
@@ -789,20 +796,43 @@ function initScrollReveal() {
         return;
     }
 
-    // Assign staggered delays to sibling reveal elements
+    /* Assign direction + stagger delays to sibling reveal elements */
     var sections = document.querySelectorAll('section');
+    var directions = ['up', 'left', 'right', 'up', 'scale', 'left', 'right', 'up'];
+
     for (var s = 0; s < sections.length; s++) {
         var reveals = sections[s].querySelectorAll('.scroll-reveal');
+        var sectionDir = directions[s % directions.length];
+
         for (var r = 0; r < reveals.length; r++) {
-            reveals[r].style.transitionDelay = (r * 0.08) + 's';
+            /* Section headings always come from up */
+            if (reveals[r].classList.contains('section-heading') || reveals[r].classList.contains('section-subheading')) {
+                reveals[r].setAttribute('data-reveal-dir', 'up');
+            } else {
+                /* Alternate left/right within a section for card grids */
+                if (sectionDir === 'left' || sectionDir === 'right') {
+                    reveals[r].setAttribute('data-reveal-dir', r % 2 === 0 ? 'left' : 'right');
+                } else {
+                    reveals[r].setAttribute('data-reveal-dir', sectionDir);
+                }
+            }
+            reveals[r].setAttribute('data-reveal-delay', Math.min(r, 8));
         }
     }
 
-    var observer = new IntersectionObserver(function (entries) {
+    /* Observe individual elements */
+    var elementObserver = new IntersectionObserver(function (entries) {
         for (var i = 0; i < entries.length; i++) {
             if (entries[i].isIntersecting) {
-                entries[i].target.classList.add('revealed');
-                observer.unobserve(entries[i].target);
+                var el = entries[i].target;
+                el.classList.add('revealed');
+
+                /* Add scanner flash to cards */
+                if (el.querySelector('.project-card, .cert-card, .casefile-card, .blog-card, .contact-card, .education-card')) {
+                    el.classList.add('scanner-flash');
+                }
+
+                elementObserver.unobserve(el);
             }
         }
     }, {
@@ -811,7 +841,196 @@ function initScrollReveal() {
     });
 
     for (var i = 0; i < elements.length; i++) {
-        observer.observe(elements[i]);
+        elementObserver.observe(elements[i]);
+    }
+}
+
+/** Cyber section scan-line effect — a neon line sweeps across each section on first entry */
+function initSectionScanEffect() {
+    var sections = document.querySelectorAll('section.section-padding');
+    if (!sections.length || !('IntersectionObserver' in window)) return;
+
+    var sectionObserver = new IntersectionObserver(function (entries) {
+        for (var i = 0; i < entries.length; i++) {
+            if (entries[i].isIntersecting) {
+                entries[i].target.classList.add('scan-active');
+                entries[i].target.classList.add('glow-active');
+                sectionObserver.unobserve(entries[i].target);
+            }
+        }
+    }, {
+        threshold: 0.12,
+        rootMargin: '-20px'
+    });
+
+    for (var i = 0; i < sections.length; i++) {
+        sectionObserver.observe(sections[i]);
+    }
+}
+
+/** Glowing scroll progress indicator at top of page */
+function initScrollProgress() {
+    var fill = document.getElementById('scrollProgressFill');
+    var glow = document.getElementById('scrollProgressGlow');
+    var track = fill ? fill.parentElement : null;
+    if (!fill || !track) return;
+
+    var ticking = false;
+    var lastScrollY = 0;
+    var isScrolling = false;
+    var scrollTimer = null;
+
+    function updateProgress() {
+        var scrollTop = window.scrollY || document.documentElement.scrollTop;
+        var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        var progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+
+        fill.style.width = progress + '%';
+
+        /* Position glow at the leading edge */
+        if (glow) {
+            glow.style.left = 'calc(' + progress + '% - 40px)';
+        }
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', function () {
+        if (!ticking) {
+            requestAnimationFrame(updateProgress);
+            ticking = true;
+        }
+
+        /* Show glow while actively scrolling */
+        if (!isScrolling) {
+            isScrolling = true;
+            track.classList.add('active');
+        }
+        clearTimeout(scrollTimer);
+        scrollTimer = setTimeout(function () {
+            isScrolling = false;
+            track.classList.remove('active');
+        }, 800);
+    }, { passive: true });
+
+    updateProgress();
+}
+
+/** Scroll-triggered particle burst system — glowing cyber particles emit from sections entering view */
+function initScrollParticles() {
+    var canvas = document.getElementById('scrollParticleCanvas');
+    if (!canvas) return;
+
+    /* Respect prefers-reduced-motion */
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        canvas.style.display = 'none';
+        return;
+    }
+
+    var ctx = canvas.getContext('2d');
+    var particles = [];
+    var animationId = null;
+    var isRunning = false;
+
+    function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    var colors = [
+        'rgba(56, 189, 248, ',   /* cyan */
+        'rgba(99, 102, 241, ',   /* indigo */
+        'rgba(139, 92, 246, ',   /* violet */
+        'rgba(245, 158, 11, '    /* amber */
+    ];
+
+    function Particle(x, y) {
+        this.x = x;
+        this.y = y;
+        this.vx = (Math.random() - 0.5) * 3;
+        this.vy = -Math.random() * 2.5 - 0.5;
+        this.life = 1;
+        this.decay = 0.008 + Math.random() * 0.012;
+        this.size = Math.random() * 3 + 1;
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    Particle.prototype.update = function () {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vy -= 0.01; /* slight upward drift */
+        this.life -= this.decay;
+        this.size *= 0.995;
+    };
+
+    Particle.prototype.draw = function () {
+        if (this.life <= 0) return;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = this.color + (this.life * 0.6) + ')';
+        ctx.fill();
+
+        /* Glow */
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size * 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = this.color + (this.life * 0.15) + ')';
+        ctx.fill();
+    };
+
+    function spawnBurst(yPosition) {
+        var count = 15 + Math.floor(Math.random() * 10);
+        for (var i = 0; i < count; i++) {
+            var x = Math.random() * canvas.width;
+            /* Convert page Y to viewport Y */
+            var viewY = yPosition - window.scrollY;
+            if (viewY < 0 || viewY > canvas.height) viewY = canvas.height * 0.5;
+            particles.push(new Particle(x, viewY));
+        }
+        if (!isRunning) {
+            isRunning = true;
+            animate();
+        }
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        for (var i = particles.length - 1; i >= 0; i--) {
+            particles[i].update();
+            particles[i].draw();
+            if (particles[i].life <= 0) {
+                particles.splice(i, 1);
+            }
+        }
+
+        if (particles.length > 0) {
+            animationId = requestAnimationFrame(animate);
+        } else {
+            isRunning = false;
+        }
+    }
+
+    /* Observe sections — emit particles when they enter view */
+    var sections = document.querySelectorAll('section.section-padding');
+    if (!('IntersectionObserver' in window) || !sections.length) return;
+
+    var particleObserver = new IntersectionObserver(function (entries) {
+        for (var i = 0; i < entries.length; i++) {
+            if (entries[i].isIntersecting) {
+                var rect = entries[i].target.getBoundingClientRect();
+                spawnBurst(entries[i].target.offsetTop);
+                particleObserver.unobserve(entries[i].target);
+            }
+        }
+    }, {
+        threshold: 0.15,
+        rootMargin: '0px'
+    });
+
+    for (var i = 0; i < sections.length; i++) {
+        particleObserver.observe(sections[i]);
     }
 }
 
@@ -1479,7 +1698,7 @@ function initCursorGlow() {
  * satisfying tactile feedback without being distracting.
  */
 function initSocialIconEffects() {
-    var socialLinks = document.querySelectorAll('.social-icon-link');
+    var socialLinks = document.querySelectorAll('.social-icon-link, .footer-social a');
 
     for (var i = 0; i < socialLinks.length; i++) {
         socialLinks[i].addEventListener('click', function () {
