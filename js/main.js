@@ -1251,8 +1251,8 @@ function initCursorParticles() {
     var canvas = document.getElementById('cursorParticles');
     if (!canvas || !canvas.getContext) return;
 
-    // Skip on touch-only devices (no hover capability)
-    if (window.matchMedia && window.matchMedia('(hover: none)').matches) {
+    // Skip on devices without a fine pointer (pure touch phones/tablets)
+    if (window.matchMedia && window.matchMedia('(pointer: coarse) and (hover: none)').matches) {
         canvas.style.display = 'none';
         return;
     }
@@ -1263,9 +1263,9 @@ function initCursorParticles() {
     var mouseY = -9999;
     var isHovering = false;
     var animId = null;
-    var MAX_PARTICLES = 80;
-    var CONNECT_DIST = 120;
-    var SPAWN_RATE = 3; // particles per frame while moving
+    var MAX_PARTICLES = 100;
+    var CONNECT_DIST = 140;
+    var SPAWN_RATE = 4; // particles per frame while moving
 
     function resize() {
         canvas.width = window.innerWidth;
@@ -1302,8 +1302,8 @@ function initCursorParticles() {
                 vx: Math.cos(angle) * speed,
                 vy: Math.sin(angle) * speed,
                 life: 1.0,
-                decay: 0.008 + Math.random() * 0.012,
-                size: 1.5 + Math.random() * 2.5,
+                decay: 0.006 + Math.random() * 0.01,
+                size: 2 + Math.random() * 3,
                 color: isAmber
                     ? (isDark ? '245, 158, 11' : '217, 119, 6')    // amber
                     : (isDark ? '59, 130, 246' : '37, 99, 235')    // blue
@@ -1335,7 +1335,7 @@ function initCursorParticles() {
                 var dy = particles[i].y - particles[j].y;
                 var dist = Math.sqrt(dx * dx + dy * dy);
                 if (dist < CONNECT_DIST) {
-                    var alpha = (1 - dist / CONNECT_DIST) * Math.min(particles[i].life, particles[j].life) * 0.3;
+                    var alpha = (1 - dist / CONNECT_DIST) * Math.min(particles[i].life, particles[j].life) * 0.4;
                     ctx.beginPath();
                     ctx.moveTo(particles[i].x, particles[i].y);
                     ctx.lineTo(particles[j].x, particles[j].y);
@@ -1349,12 +1349,12 @@ function initCursorParticles() {
         // Draw particles
         for (var i = 0; i < particles.length; i++) {
             var p = particles[i];
-            var alpha = p.life * 0.8;
+            var alpha = p.life * 0.9;
 
             // Glow
             ctx.beginPath();
             ctx.arc(p.x, p.y, p.size * 3, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(' + p.color + ', ' + (alpha * 0.1) + ')';
+            ctx.fillStyle = 'rgba(' + p.color + ', ' + (alpha * 0.15) + ')';
             ctx.fill();
 
             // Core
