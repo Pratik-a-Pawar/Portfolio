@@ -1246,6 +1246,21 @@ function handleEmailReveal() {
                 textEl.classList.remove('decrypting');
                 btn._busy = false;
 
+                /* Block copy / cut / right-click / selection while email is visible */
+                var blockAction = function (e) { e.preventDefault(); return false; };
+                textEl.addEventListener('copy',        blockAction);
+                textEl.addEventListener('cut',         blockAction);
+                textEl.addEventListener('contextmenu', blockAction);
+                textEl.addEventListener('selectstart', blockAction);
+                textEl.addEventListener('dragstart',   blockAction);
+                textEl._unblockActions = function () {
+                    textEl.removeEventListener('copy',        blockAction);
+                    textEl.removeEventListener('cut',         blockAction);
+                    textEl.removeEventListener('contextmenu', blockAction);
+                    textEl.removeEventListener('selectstart', blockAction);
+                    textEl.removeEventListener('dragstart',   blockAction);
+                };
+
                 if (typeof trackEvent === 'function') trackEvent('email_reveal');
 
                 /* PHASE 3 — Countdown bar, 9 seconds */
@@ -1285,6 +1300,12 @@ function handleEmailReveal() {
                             textEl.textContent = '';
                             textEl.classList.remove('visible', 'encrypting');
                             if (cdFill) cdFill.style.width = '100%';
+
+                            /* Re-enable interactions now that text is gone */
+                            if (textEl._unblockActions) {
+                                textEl._unblockActions();
+                                textEl._unblockActions = null;
+                            }
 
                             /* PHASE 5 — Eye closing (500 ms) */
                             btn.classList.remove('eye-open');
