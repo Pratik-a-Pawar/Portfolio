@@ -784,7 +784,7 @@ function initBackToTop() {
     });
 }
 
-/** Enhanced Scroll-reveal — direction-aware, staggered, with cyber scanner flash */
+/** Enhanced Scroll-reveal — staggered with cyber scanner flash */
 function initScrollReveal() {
     var elements = document.querySelectorAll('.scroll-reveal');
     if (!elements.length) return;
@@ -796,27 +796,21 @@ function initScrollReveal() {
         return;
     }
 
-    /* Assign direction + stagger delays to sibling reveal elements */
+    /* Assign stagger delays to sibling reveal elements within each section */
     var sections = document.querySelectorAll('section');
-    var directions = ['up', 'left', 'right', 'up', 'scale', 'left', 'right', 'up'];
 
     for (var s = 0; s < sections.length; s++) {
         var reveals = sections[s].querySelectorAll('.scroll-reveal');
-        var sectionDir = directions[s % directions.length];
-
         for (var r = 0; r < reveals.length; r++) {
-            /* Section headings always come from up */
+            /* Headings come in first, cards stagger after */
             if (reveals[r].classList.contains('section-heading') || reveals[r].classList.contains('section-subheading')) {
+                reveals[r].setAttribute('data-reveal-delay', '0');
                 reveals[r].setAttribute('data-reveal-dir', 'up');
             } else {
-                /* Alternate left/right within a section for card grids */
-                if (sectionDir === 'left' || sectionDir === 'right') {
-                    reveals[r].setAttribute('data-reveal-dir', r % 2 === 0 ? 'left' : 'right');
-                } else {
-                    reveals[r].setAttribute('data-reveal-dir', sectionDir);
-                }
+                reveals[r].setAttribute('data-reveal-delay', Math.min(r, 6));
+                /* Alternate between 'up' and 'scale' for variety without breaking layout */
+                reveals[r].setAttribute('data-reveal-dir', r % 3 === 0 ? 'scale' : 'up');
             }
-            reveals[r].setAttribute('data-reveal-delay', Math.min(r, 8));
         }
     }
 
@@ -1620,6 +1614,7 @@ function initCursorGlow() {
     var mouseY = -100;
     var glowX = -100;
     var glowY = -100;
+    var fadeTimer = null;
 
     // Interactive selectors that trigger the "expand" effect
     var interactiveSelectors = 'a, button, .btn, .social-icon-link, .project-card, .cert-card, .casefile-card, .blog-card, .contact-card, .nav-link, .theme-toggle-btn, input, textarea';
@@ -1628,10 +1623,16 @@ function initCursorGlow() {
         mouseX = e.clientX;
         mouseY = e.clientY;
 
-        // Show glow after first mouse move
+        // Show glow on movement
         if (!glow.classList.contains('visible')) {
             glow.classList.add('visible');
         }
+
+        // Reset the fade-out timer on every move
+        clearTimeout(fadeTimer);
+        fadeTimer = setTimeout(function () {
+            glow.classList.remove('visible');
+        }, 300); // fade out 300ms after mouse stops
 
         // Check if hovering over interactive element
         var target = e.target;
@@ -1646,10 +1647,7 @@ function initCursorGlow() {
 
     document.addEventListener('mouseleave', function () {
         glow.classList.remove('visible');
-    });
-
-    document.addEventListener('mouseenter', function () {
-        glow.classList.add('visible');
+        clearTimeout(fadeTimer);
     });
 
     // Click burst — spawn a burst element on every click

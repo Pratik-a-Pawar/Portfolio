@@ -259,7 +259,6 @@ body {
     margin-bottom: 1rem;
     color: var(--text-primary);
     text-align: center;
-    position: relative;
 }
 
 .heading-accent {
@@ -287,11 +286,11 @@ body {
 /* ---- Scroll Reveal ---- */
 .scroll-reveal {
     opacity: 0;
-    transform: translateY(50px);
-    transition: opacity 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                filter 0.8s ease;
-    filter: blur(6px);
+    transform: translateY(30px);
+    transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                filter 0.7s ease;
+    filter: blur(3px);
     will-change: opacity, transform, filter;
 }
 
@@ -301,29 +300,23 @@ body {
     filter: blur(0);
 }
 
-/* Direction-aware reveals — set via JS data-reveal-dir */
-.scroll-reveal[data-reveal-dir="left"] {
-    transform: translateX(-60px) translateY(20px);
-}
-.scroll-reveal[data-reveal-dir="right"] {
-    transform: translateX(60px) translateY(20px);
-}
+/* Direction-aware reveals — subtle variations, no horizontal shift to avoid grid misalignment */
+.scroll-reveal[data-reveal-dir="left"],
+.scroll-reveal[data-reveal-dir="right"],
 .scroll-reveal[data-reveal-dir="up"] {
-    transform: translateY(50px);
+    transform: translateY(30px);
 }
 .scroll-reveal[data-reveal-dir="scale"] {
-    transform: scale(0.85);
+    transform: scale(0.93) translateY(15px);
 }
 
 /* Stagger delays for elements within the same section */
 .scroll-reveal[data-reveal-delay="1"] { transition-delay: 0.08s; }
 .scroll-reveal[data-reveal-delay="2"] { transition-delay: 0.16s; }
-.scroll-reveal[data-reveal-delay="3"] { transition-delay: 0.24s; }
-.scroll-reveal[data-reveal-delay="4"] { transition-delay: 0.32s; }
-.scroll-reveal[data-reveal-delay="5"] { transition-delay: 0.40s; }
-.scroll-reveal[data-reveal-delay="6"] { transition-delay: 0.48s; }
-.scroll-reveal[data-reveal-delay="7"] { transition-delay: 0.56s; }
-.scroll-reveal[data-reveal-delay="8"] { transition-delay: 0.64s; }
+.scroll-reveal[data-reveal-delay="3"] { transition-delay: 0.22s; }
+.scroll-reveal[data-reveal-delay="4"] { transition-delay: 0.28s; }
+.scroll-reveal[data-reveal-delay="5"] { transition-delay: 0.34s; }
+.scroll-reveal[data-reveal-delay="6"] { transition-delay: 0.40s; }
 
 /* Cyber scanner flash on reveal */
 .scroll-reveal.revealed.scanner-flash {
@@ -344,29 +337,20 @@ body {
     }
 }
 
-/* Section headings get a special sweep-in line */
-.section-heading.scroll-reveal.revealed::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
-    animation: headingSweep 0.8s ease-out 0.3s both;
+/* Section headings get a subtle glow pulse on reveal */
+.section-heading.scroll-reveal.revealed {
+    animation: headingGlowPulse 0.8s ease-out 0.2s both;
 }
 
-@keyframes headingSweep {
+@keyframes headingGlowPulse {
     0% {
-        transform: scaleX(0);
-        opacity: 0;
+        text-shadow: 0 0 0 transparent;
     }
-    50% {
-        opacity: 1;
+    40% {
+        text-shadow: 0 0 20px rgba(56, 189, 248, 0.15);
     }
     100% {
-        transform: scaleX(1);
-        opacity: 0;
+        text-shadow: 0 0 0 transparent;
     }
 }
 
@@ -2559,7 +2543,6 @@ html:not([data-theme="light"]) .theme-toggle-btn:hover .moon-shape {
    ============================================ */
 section.section-padding {
     position: relative;
-    overflow: hidden;
 }
 
 section.section-padding::before {
@@ -2834,6 +2817,9 @@ section.section-padding.glow-active {
     .scroll-reveal.revealed.scanner-flash {
         animation: none !important;
     }
+    .section-heading.scroll-reveal.revealed {
+        animation: none !important;
+    }
     section.section-padding::before {
         display: none !important;
     }
@@ -2845,8 +2831,5 @@ section.section-padding.glow-active {
     }
     #scrollParticleCanvas {
         display: none !important;
-    }
-    .section-heading.scroll-reveal.revealed::after {
-        animation: none !important;
     }
 }
