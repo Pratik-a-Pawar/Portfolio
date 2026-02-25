@@ -2178,18 +2178,14 @@ html:not([data-theme="light"]) .theme-toggle-btn:hover .moon-shape {
     right: 2rem;
     width: 48px;
     height: 48px;
-    border-radius: 24px;
+    border-radius: 50%;
     border: none;
     font-size: 1.2rem;
     cursor: pointer;
     opacity: 0;
     visibility: hidden;
     transform: translateY(10px);
-    transition: width 0.35s ease, height 0.35s ease, border-radius 0.35s ease,
-                opacity 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
-                visibility 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
-                transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
-                box-shadow 0.4s ease;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     z-index: 999;
     display: flex;
     align-items: center;
@@ -2221,95 +2217,25 @@ html:not([data-theme="light"]) .theme-toggle-btn:hover .moon-shape {
     animation: backToTopFloat 3s ease-in-out infinite;
 }
 
-.back-to-top:hover:not(.goku-flying) {
+.back-to-top:hover {
     transform: translateY(-5px) scale(1.1);
     animation: none;
 }
 
-[data-theme="dark"] .back-to-top:hover:not(.goku-flying),
-.back-to-top:hover:not(.goku-flying) {
+[data-theme="dark"] .back-to-top:hover,
+.back-to-top:hover {
     box-shadow: 0 8px 30px rgba(56, 189, 248, 0.55),
                 0 0 50px rgba(56, 189, 248, 0.15);
 }
 
-[data-theme="light"] .back-to-top:hover:not(.goku-flying) {
+[data-theme="light"] .back-to-top:hover {
     box-shadow: 0 8px 30px rgba(249, 115, 22, 0.55),
                 0 0 50px rgba(249, 115, 22, 0.15);
 }
 
-.back-to-top:active:not(.goku-flying) {
+.back-to-top:active {
     transform: translateY(-2px) scale(0.95);
     transition-duration: 0.1s;
-}
-
-/* ---- GOKU FLYING ANIMATION STATE ---- */
-.back-to-top.goku-flying {
-    width: 56px !important;
-    height: 112px !important;
-    border-radius: 28px !important;
-    background: linear-gradient(180deg, #050814 0%, #0d1230 40%, #1a1a3e 70%, #050814 100%) !important;
-    box-shadow: 0 0 28px rgba(255, 215, 0, 0.95),
-                0 0 55px rgba(255, 165, 0, 0.65),
-                0 0 90px rgba(255, 220, 0, 0.3) !important;
-    animation: gokuAuraPulse 0.55s ease-in-out infinite !important;
-    cursor: default;
-    overflow: hidden;
-}
-
-/* Animated inner wrapper that carries Goku upward */
-.back-to-top.goku-flying .goku-wrapper {
-    position: absolute;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation: gokuFlyUp 1.9s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    pointer-events: none;
-    will-change: transform;
-}
-
-/* Golden aura burst at the base */
-.back-to-top.goku-flying .goku-aura {
-    position: absolute;
-    bottom: -4px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 50px;
-    height: 22px;
-    background: radial-gradient(ellipse at center,
-        rgba(255, 230, 0, 0.95) 0%,
-        rgba(255, 165, 0, 0.55) 55%,
-        transparent 100%);
-    animation: auraBloom 0.45s ease-in-out infinite alternate;
-    pointer-events: none;
-    border-radius: 50%;
-}
-
-/* Keyframes */
-@keyframes gokuAuraPulse {
-    0%, 100% {
-        box-shadow: 0 0 28px rgba(255, 215, 0, 0.95),
-                    0 0 55px rgba(255, 165, 0, 0.65),
-                    0 0 90px rgba(255, 220, 0, 0.3);
-    }
-    50% {
-        box-shadow: 0 0 45px rgba(255, 230, 0, 1),
-                    0 0 80px rgba(255, 165, 0, 0.85),
-                    0 0 120px rgba(255, 255, 80, 0.45);
-    }
-}
-
-@keyframes gokuFlyUp {
-    0%   { transform: translateY(90px) rotate(-4deg); }
-    25%  { transform: translateY(40px) rotate(-2deg); }
-    50%  { transform: translateY(0px) rotate(0deg); }
-    75%  { transform: translateY(-40px) rotate(2deg); }
-    100% { transform: translateY(-90px) rotate(4deg); }
-}
-
-@keyframes auraBloom {
-    from { transform: translateX(-50%) scaleX(0.75) scaleY(0.65); opacity: 0.65; }
-    to   { transform: translateX(-50%) scaleX(1.25) scaleY(1.4);  opacity: 1; }
 }
 
 @keyframes backToTopFloat {
