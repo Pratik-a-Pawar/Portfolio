@@ -259,6 +259,8 @@ body {
     margin-bottom: 1rem;
     color: var(--text-primary);
     text-align: center;
+    position: relative;
+    z-index: 5;
 }
 
 .heading-accent {
@@ -272,6 +274,8 @@ body {
     color: var(--text-secondary);
     margin-bottom: 3rem;
     font-size: 1.05rem;
+    position: relative;
+    z-index: 5;
 }
 
 .section-label {
@@ -300,23 +304,21 @@ body {
     filter: blur(0);
 }
 
-/* Direction-aware reveals — subtle variations, no horizontal shift to avoid grid misalignment */
+/* Direction-aware reveals — all use identical vertical movement to prevent grid misalignment */
 .scroll-reveal[data-reveal-dir="left"],
 .scroll-reveal[data-reveal-dir="right"],
-.scroll-reveal[data-reveal-dir="up"] {
+.scroll-reveal[data-reveal-dir="up"],
+.scroll-reveal[data-reveal-dir="scale"] {
     transform: translateY(30px);
 }
-.scroll-reveal[data-reveal-dir="scale"] {
-    transform: scale(0.93) translateY(15px);
-}
 
-/* Stagger delays for elements within the same section */
-.scroll-reveal[data-reveal-delay="1"] { transition-delay: 0.08s; }
-.scroll-reveal[data-reveal-delay="2"] { transition-delay: 0.16s; }
-.scroll-reveal[data-reveal-delay="3"] { transition-delay: 0.22s; }
-.scroll-reveal[data-reveal-delay="4"] { transition-delay: 0.28s; }
-.scroll-reveal[data-reveal-delay="5"] { transition-delay: 0.34s; }
-.scroll-reveal[data-reveal-delay="6"] { transition-delay: 0.40s; }
+/* Stagger delays — kept very tight so grid row items appear near-simultaneously */
+.scroll-reveal[data-reveal-delay="1"] { transition-delay: 0.06s; }
+.scroll-reveal[data-reveal-delay="2"] { transition-delay: 0.12s; }
+.scroll-reveal[data-reveal-delay="3"] { transition-delay: 0.12s; }
+.scroll-reveal[data-reveal-delay="4"] { transition-delay: 0.18s; }
+.scroll-reveal[data-reveal-delay="5"] { transition-delay: 0.18s; }
+.scroll-reveal[data-reveal-delay="6"] { transition-delay: 0.24s; }
 
 /* Cyber scanner flash on reveal */
 .scroll-reveal.revealed.scanner-flash {
@@ -1442,7 +1444,8 @@ html:not([data-theme="light"]) .theme-toggle-btn:hover .moon-shape {
 
 .project-showcase:hover {
     box-shadow: var(--card-glow-hover);
-    transform: translateY(-3px);
+    transform: translateY(-2px);
+    z-index: 2;
 }
 
 .project-showcase-title {
@@ -2069,6 +2072,13 @@ html:not([data-theme="light"]) .theme-toggle-btn:hover .moon-shape {
     color: var(--text-primary);
     margin-bottom: 0;
     letter-spacing: 0.8px;
+}
+
+/* Override browser link/visited color on clickable contact cards */
+a.contact-card-clickable .contact-card-label,
+a.contact-card-clickable:visited .contact-card-label,
+a.contact-card-clickable:link .contact-card-label {
+    color: var(--text-primary);
 }
 
 .contact-card-value {

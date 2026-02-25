@@ -816,20 +816,24 @@ function initScrollReveal() {
         return;
     }
 
-    /* Assign stagger delays to sibling reveal elements within each section */
+    /* Assign stagger delays — group grid row items at the same delay
+       so cards in the same Bootstrap row appear together */
     var sections = document.querySelectorAll('section');
 
     for (var s = 0; s < sections.length; s++) {
         var reveals = sections[s].querySelectorAll('.scroll-reveal');
+        var cardIndex = 0;
+
         for (var r = 0; r < reveals.length; r++) {
-            /* Headings come in first, cards stagger after */
+            reveals[r].setAttribute('data-reveal-dir', 'up');
+
             if (reveals[r].classList.contains('section-heading') || reveals[r].classList.contains('section-subheading')) {
                 reveals[r].setAttribute('data-reveal-delay', '0');
-                reveals[r].setAttribute('data-reveal-dir', 'up');
             } else {
-                reveals[r].setAttribute('data-reveal-delay', Math.min(r, 6));
-                /* Alternate between 'up' and 'scale' for variety without breaking layout */
-                reveals[r].setAttribute('data-reveal-dir', r % 3 === 0 ? 'scale' : 'up');
+                /* Group every 3 cards at the same delay (typical Bootstrap row = 3 cols) */
+                var rowGroup = Math.floor(cardIndex / 3);
+                reveals[r].setAttribute('data-reveal-delay', Math.min(rowGroup + 1, 6));
+                cardIndex++;
             }
         }
     }
