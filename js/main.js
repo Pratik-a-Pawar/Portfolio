@@ -255,10 +255,9 @@ const CONTACT_INFO = [
     {
         label: 'Email',
         icon: 'bi-envelope-fill',
-        displayValue: '',
-        clickUrl: 'mailto:pawar.pratik@hotmail.com',
-        isClickable: true,
-        openInNewTab: false
+        isClickable: false,
+        isEmailReveal: true,
+        emailB64: 'cGF3YXIucHJhdGlrQGhvdG1haWwuY29t'
     },
     {
         label: 'LinkedIn',
@@ -650,7 +649,7 @@ function renderBlog() {
     container.innerHTML = html;
 }
 
-/** Render contact cards — clickable, privacy-first (no emails/URLs displayed) */
+/** Render contact cards */
 function renderContact() {
     var container = document.getElementById('contactContainer');
     if (!container) return;
@@ -659,33 +658,52 @@ function renderContact() {
         var info = CONTACT_INFO[i];
         html += '<div class="col-lg-3 col-md-6 mb-4 scroll-reveal">';
 
-        if (info.isClickable) {
+        if (info.isEmailReveal) {
+            /* ── Email card: hover-to-show eye button, click to decrypt ── */
+            html += '<div class="contact-card email-reveal-card" id="emailRevealCard">';
+
+            /* Eye button — visible only on card hover */
+            html += '<button class="eye-reveal-btn" id="eyeRevealBtn"' +
+                    ' aria-label="Reveal email address" title="Click to reveal email">' +
+                    '<span class="eye-icon-wrap">' +
+                    '<i class="bi bi-eye-slash eye-icon-closed"></i>' +
+                    '<i class="bi bi-eye eye-icon-open"></i>' +
+                    '</span></button>';
+
+            html += '<div class="contact-card-icon"><i class="bi ' + info.icon + '"></i></div>';
+            html += '<div class="contact-card-label">' + escapeHtml(info.label) + '</div>';
+            html += '<div class="email-text-reveal" id="emailTextReveal"></div>';
+            html += '<div class="email-countdown" id="emailCountdown">' +
+                    '<div class="email-countdown-fill" id="emailCountdownFill"></div></div>';
+            html += '</div>';
+
+        } else if (info.isClickable) {
             html += '<a href="' + escapeHtml(info.clickUrl) + '"' +
                     (info.openInNewTab ? ' target="_blank" rel="noopener noreferrer"' : '') +
                     ' class="contact-card contact-card-clickable" style="text-decoration:none;color:inherit;">';
+            html += '<div class="contact-card-icon"><i class="bi ' + info.icon + '"></i></div>';
+            html += '<div class="contact-card-label">' + escapeHtml(info.label) + '</div>';
+            html += '</a>';
+
         } else {
             html += '<div class="contact-card">';
-        }
-
-        html += '<div class="contact-card-icon"><i class="bi ' + info.icon + '"></i></div>';
-        html += '<div class="contact-card-label">' + escapeHtml(info.label) + '</div>';
-
-        /* Only show value row if there's a displayValue (Location card etc.) */
-        if (info.displayValue) {
-            html += '<div class="contact-card-value">';
-            html += '<span>' + escapeHtml(info.displayValue) + '</span>';
-            html += '</div>';
-        }
-
-        if (info.isClickable) {
-            html += '</a>';
-        } else {
+            html += '<div class="contact-card-icon"><i class="bi ' + info.icon + '"></i></div>';
+            html += '<div class="contact-card-label">' + escapeHtml(info.label) + '</div>';
+            if (info.displayValue) {
+                html += '<div class="contact-card-value"><span>' + escapeHtml(info.displayValue) + '</span></div>';
+            }
             html += '</div>';
         }
 
         html += '</div>';
     }
     container.innerHTML = html;
+
+    /* Attach eye-button handler after DOM is rendered */
+    var eyeBtn = document.getElementById('eyeRevealBtn');
+    if (eyeBtn) {
+        eyeBtn.addEventListener('click', handleEmailReveal);
+    }
 }
 
 
@@ -1181,73 +1199,126 @@ function initTriageDemo() {
     });
 }
 
-/** Contact eye-toggle reveal with 10-second auto-mask */
-function handleContactReveal(e) {
-    var btn = e.currentTarget;
-    var index = parseInt(btn.getAttribute('data-contact-index'), 10);
-    var info = CONTACT_INFO[index];
-    var valueEl = document.getElementById('contactVal' + index);
-    var countdownEl = document.getElementById('contactCountdown' + index);
-    var fillEl = document.getElementById('contactCountdownFill' + index);
+/** Email reveal: spectacular eye open → decrypt → 9-second display → encrypt → eye close */
+function handleEmailReveal() {
+    var btn     = document.getElementById('eyeRevealBtn');
+    var textEl  = document.getElementById('emailTextReveal');
+    var cdBar   = document.getElementById('emailCountdown');
+    var cdFill  = document.getElementById('emailCountdownFill');
 
-    if (!valueEl || !info || !info.isMasked) return;
+    if (!btn || !textEl) return;
+    if (btn._busy) return;   // ignore clicks during an animation sequence
+    btn._busy = true;
 
-    // Decode the value from Base64 parts
-    var decoded = '';
-    if (info.valueParts) {
-        for (var i = 0; i < info.valueParts.length; i++) {
-            decoded += atob(info.valueParts[i]);
-        }
-    }
+    /* Cancel any previous timers that may still be ticking */
+    clearTimeout(btn._revealTimeout);
+    clearInterval(btn._decryptInterval);
+    clearInterval(btn._countInterval);
 
-    // If email, join parts with special order: pawar. + pratik + @hotmail.com
-    // The parts are already ordered in the data array
-    valueEl.textContent = decoded;
-    btn.querySelector('i').className = 'bi bi-eye-slash';
+    /* Decode email from base64 */
+    var email = atob(CONTACT_INFO[0].emailB64);
 
-    // Show countdown
-    if (countdownEl) {
-        countdownEl.classList.add('active');
-    }
+    /* Scramble chars pool */
+    var pool = '!@#$%^&*?><[]{}|~ABCDEFGHIJKabcdefghijklm0123456789';
 
-    // Track analytics event
-    if (typeof trackEvent === 'function') {
-        trackEvent('email_reveal');
-    }
+    /* ─────────────────────────────────────────────────
+       PHASE 1 — Eye opening burst animation (550 ms)
+    ───────────────────────────────────────────────── */
+    btn.classList.add('eye-opening');
 
-    // Auto-mask after 10 seconds with countdown animation
-    var duration = 10000;
-    var startTime = Date.now();
+    setTimeout(function () {
+        btn.classList.remove('eye-opening');
+        btn.classList.add('eye-open');        // swap icon: slash → normal
 
-    var countdownInterval = setInterval(function () {
-        var elapsed = Date.now() - startTime;
-        var remaining = Math.max(0, 1 - elapsed / duration);
-        if (fillEl) {
-            fillEl.style.width = (remaining * 100) + '%';
-        }
-        if (elapsed >= duration) {
-            clearInterval(countdownInterval);
-        }
-    }, 50);
+        /* ─────────────────────────────────────────────────
+           PHASE 2 — Decrypt the email (character cycling)
+        ───────────────────────────────────────────────── */
+        textEl.textContent = '';
+        textEl.classList.remove('encrypting');
+        textEl.classList.add('visible', 'decrypting');
 
-    var timeout = setTimeout(function () {
-        valueEl.textContent = info.maskedValue;
-        btn.querySelector('i').className = 'bi bi-eye';
-        if (countdownEl) {
-            countdownEl.classList.remove('active');
-        }
-        if (fillEl) {
-            fillEl.style.width = '100%';
-        }
-    }, duration);
+        var iter  = 0;
+        var total = email.length * 3;   // how many ticks before all chars lock in
 
-    // Store timeout reference for cleanup
-    if (btn._revealTimeout) {
-        clearTimeout(btn._revealTimeout);
-        clearInterval(btn._countdownInterval);
-    }
-    btn._revealTimeout = timeout;
-    btn._countdownInterval = countdownInterval;
+        btn._decryptInterval = setInterval(function () {
+            /* Build text: chars to the left of the "lock front" are final,
+               chars to the right are still randomised                        */
+            textEl.textContent = email.split('').map(function (ch, idx) {
+                if (idx < Math.floor(iter / 3)) return ch;   // locked
+                if (ch === '@' || ch === '.') return ch;      // keep structure
+                return pool[Math.floor(Math.random() * pool.length)];
+            }).join('');
+
+            iter++;
+
+            if (iter > total + 4) {
+                clearInterval(btn._decryptInterval);
+                textEl.textContent = email;          // final clean text
+                textEl.classList.remove('decrypting');
+                btn._busy = false;
+
+                if (typeof trackEvent === 'function') trackEvent('email_reveal');
+
+                /* ───────────────────────────────────────────────
+                   PHASE 3 — Show countdown bar, wait 9 seconds
+                ─────────────────────────────────────────────── */
+                if (cdBar)  cdBar.classList.add('active');
+                if (cdFill) cdFill.style.width = '100%';
+
+                var duration  = 9000;
+                var startTime = Date.now();
+
+                btn._countInterval = setInterval(function () {
+                    var elapsed   = Date.now() - startTime;
+                    var remaining = Math.max(0, 1 - elapsed / duration);
+                    if (cdFill) cdFill.style.width = (remaining * 100) + '%';
+                    if (elapsed >= duration) clearInterval(btn._countInterval);
+                }, 50);
+
+                /* ───────────────────────────────────────────────
+                   PHASE 4 — After 9 s: encrypt animation + hide
+                ─────────────────────────────────────────────── */
+                btn._revealTimeout = setTimeout(function () {
+                    btn._busy = true;
+                    if (cdBar) cdBar.classList.remove('active');
+
+                    textEl.classList.add('encrypting');
+                    var hideIter  = 0;
+                    var hideTotal = email.length * 2;
+
+                    btn._decryptInterval = setInterval(function () {
+                        /* Scramble chars from right-to-left until nothing remains */
+                        textEl.textContent = email.split('').map(function (ch, idx) {
+                            if (idx > email.length - Math.floor(hideIter / 2) - 1) {
+                                return pool[Math.floor(Math.random() * pool.length)];
+                            }
+                            return ch;
+                        }).join('');
+                        hideIter++;
+
+                        if (hideIter > hideTotal + 4) {
+                            clearInterval(btn._decryptInterval);
+                            textEl.textContent = '';
+                            textEl.classList.remove('visible', 'encrypting');
+                            if (cdFill) cdFill.style.width = '100%';
+
+                            /* ───────────────────────────────────────
+                               PHASE 5 — Eye closing animation (500 ms)
+                            ─────────────────────────────────────── */
+                            btn.classList.remove('eye-open');
+                            btn.classList.add('eye-closing');
+
+                            setTimeout(function () {
+                                btn.classList.remove('eye-closing');
+                                btn._busy = false;
+                            }, 500);
+                        }
+                    }, 40);
+                }, duration);
+            }
+        }, 40);
+
+    }, 550);   // matches eye-opening animation duration
 }
 
 /** Radar Chart rendering (Canvas) */

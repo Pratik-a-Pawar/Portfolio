@@ -2082,38 +2082,255 @@ html:not([data-theme="light"]) .theme-toggle-btn:hover .moon-shape {
     gap: 0.5rem;
 }
 
-.eye-toggle-btn {
-    background: none;
-    border: none;
+/* ── EMAIL REVEAL CARD ─────────────────────────────────────── */
+.email-reveal-card {
+    position: relative;
+}
+
+/* Eye button — hidden by default, slides in on card hover */
+.eye-reveal-btn {
+    position: absolute;
+    top: 0.55rem;
+    right: 0.55rem;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(var(--accent-blue-rgb), 0.1);
+    border: 1px solid rgba(var(--accent-blue-rgb), 0.3);
     color: var(--accent-blue);
     cursor: pointer;
-    font-size: 1rem;
-    padding: 0.25rem;
-    transition: color var(--transition-fast);
-    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.05rem;
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.5) translateY(-6px);
+    transition: opacity 0.28s ease,
+                transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 10;
+    line-height: 1;
 }
 
-.eye-toggle-btn:hover {
-    color: var(--accent-amber);
+/* Show eye on card hover */
+.email-reveal-card:hover .eye-reveal-btn {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1) translateY(0);
 }
 
-.reveal-countdown {
-    display: none;
-    width: 100%;
-    height: 3px;
-    background: var(--border-color);
+/* The two icons sit on top of each other inside the button */
+.eye-icon-wrap {
+    position: relative;
+    width: 1em;
+    height: 1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.eye-icon-closed,
+.eye-icon-open {
+    position: absolute;
+    transition: opacity 0.22s ease, transform 0.22s ease;
+    line-height: 1;
+}
+
+/* Default: show closed eye, hide open eye */
+.eye-icon-closed { opacity: 1; transform: scale(1); }
+.eye-icon-open   { opacity: 0; transform: scale(0.4); }
+
+/* When .eye-open is on the button: flip which icon shows */
+.eye-reveal-btn.eye-open .eye-icon-closed { opacity: 0; transform: scale(0.4); }
+.eye-reveal-btn.eye-open .eye-icon-open   { opacity: 1; transform: scale(1); }
+
+/* ── EYE ANIMATIONS ──────────────────────────────────────── */
+
+/* Opening burst: scale up → overshoot → settle + electric glow radiates */
+@keyframes eyeOpenBurst {
+    0%   {
+        transform: scale(1) rotate(0deg);
+        box-shadow: 0 0 0 0 rgba(56, 189, 248, 0);
+    }
+    25%  {
+        transform: scale(1.5) rotate(-8deg);
+        box-shadow: 0 0 22px 4px rgba(56, 189, 248, 0.9),
+                    0 0 50px 10px rgba(56, 189, 248, 0.45);
+    }
+    55%  {
+        transform: scale(0.82) rotate(5deg);
+        box-shadow: 0 0 14px 2px rgba(56, 189, 248, 0.7);
+    }
+    75%  {
+        transform: scale(1.12) rotate(-2deg);
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+        box-shadow: 0 0 14px 3px rgba(56, 189, 248, 0.55),
+                    0 0 30px 6px rgba(56, 189, 248, 0.2);
+    }
+}
+
+.eye-reveal-btn.eye-opening {
+    animation: eyeOpenBurst 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Idle glow pulse while eye is open */
+@keyframes eyeOpenGlow {
+    0%, 100% {
+        box-shadow: 0 0 12px 2px rgba(56, 189, 248, 0.55),
+                    0 0 26px 4px rgba(56, 189, 248, 0.2);
+    }
+    50% {
+        box-shadow: 0 0 20px 5px rgba(56, 189, 248, 0.85),
+                    0 0 44px 10px rgba(56, 189, 248, 0.35);
+    }
+}
+
+.eye-reveal-btn.eye-open {
+    color: var(--accent-blue);
+    animation: eyeOpenGlow 1.6s ease-in-out infinite;
+}
+
+/* Closing animation: squish + spin + implode */
+@keyframes eyeCloseBurst {
+    0%   {
+        transform: scale(1) rotate(0deg);
+        box-shadow: 0 0 14px 3px rgba(56, 189, 248, 0.55);
+    }
+    20%  {
+        transform: scale(1.2) rotate(10deg);
+        box-shadow: 0 0 22px 6px rgba(255, 165, 0, 0.7);
+    }
+    50%  {
+        transform: scale(0.65) rotate(-12deg);
+        box-shadow: 0 0 8px 2px rgba(255, 165, 0, 0.4);
+    }
+    75%  {
+        transform: scale(1.06) rotate(4deg);
+        box-shadow: none;
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+        box-shadow: none;
+    }
+}
+
+.eye-reveal-btn.eye-closing {
+    animation: eyeCloseBurst 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* ── EMAIL TEXT REVEAL ───────────────────────────────────── */
+.email-text-reveal {
+    font-size: 0.8rem;
+    font-family: 'Courier New', Courier, monospace;
+    color: var(--accent-blue);
+    font-weight: 700;
+    word-break: break-all;
+    min-height: 1.3em;
+    margin-top: 0.55rem;
+    opacity: 0;
+    transform: translateY(5px) scale(0.95);
+    transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    text-shadow: 0 0 10px rgba(56, 189, 248, 0.45);
+    letter-spacing: 0.02em;
+}
+
+/* Text slides in when revealed */
+.email-text-reveal.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* Decrypt flash: multi-colour glitch as text settles */
+@keyframes emailDecryptFlash {
+    0%   {
+        text-shadow: 0 0 0 transparent;
+        color: rgba(56, 189, 248, 0.25);
+        letter-spacing: 0.3em;
+    }
+    35%  {
+        text-shadow: 3px 0 10px rgba(255, 50, 50, 0.7),
+                     -3px 0 10px rgba(56, 189, 248, 0.7);
+        color: #fff;
+        letter-spacing: 0.08em;
+    }
+    65%  {
+        text-shadow: 0 0 18px rgba(56, 189, 248, 0.9),
+                     0 0 6px rgba(255, 255, 255, 0.5);
+        color: #fff;
+        letter-spacing: 0.03em;
+    }
+    100% {
+        text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+        color: var(--accent-blue);
+        letter-spacing: 0.02em;
+    }
+}
+
+.email-text-reveal.decrypting {
+    animation: emailDecryptFlash 0.75s ease forwards;
+}
+
+/* Encrypt glitch: displacement flicker before vanishing */
+@keyframes emailEncryptGlitch {
+    0%   {
+        clip-path: inset(0 0 0 0);
+        transform: translateX(0) scale(1);
+        opacity: 1;
+    }
+    18%  {
+        clip-path: inset(15% 0 0 0);
+        transform: translateX(-4px);
+        color: rgba(255, 80, 80, 0.9);
+    }
+    36%  {
+        clip-path: inset(0 25% 0 0);
+        transform: translateX(4px) skewX(-4deg);
+    }
+    54%  {
+        clip-path: inset(0 0 30% 0);
+        transform: translateX(-3px);
+        opacity: 0.7;
+    }
+    72%  {
+        clip-path: inset(0 0 0 55%);
+        transform: translateX(2px) skewX(3deg);
+        opacity: 0.4;
+    }
+    90%  {
+        clip-path: inset(0 95% 0 0);
+        opacity: 0.15;
+    }
+    100% {
+        clip-path: inset(0 100% 0 0);
+        opacity: 0;
+        transform: translateX(0);
+    }
+}
+
+.email-text-reveal.encrypting {
+    animation: emailEncryptGlitch 0.65s ease forwards;
+}
+
+/* ── COUNTDOWN BAR ────────────────────────────────────────── */
+.email-countdown {
+    height: 2px;
+    background: rgba(var(--accent-blue-rgb), 0.15);
     border-radius: 2px;
-    margin-top: 0.5rem;
+    margin-top: 0.45rem;
     overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
-.reveal-countdown.active {
-    display: block;
+.email-countdown.active {
+    opacity: 1;
 }
 
-.reveal-countdown-fill {
+.email-countdown-fill {
     height: 100%;
-    background: var(--accent-amber);
+    background: linear-gradient(90deg, var(--accent-blue), var(--accent-amber));
     border-radius: 2px;
     transition: width 0.1s linear;
     width: 100%;
