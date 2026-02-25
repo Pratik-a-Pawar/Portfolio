@@ -1266,9 +1266,9 @@ function initCursorParticles() {
     var mouseY = -9999;
     var isHovering = false;
     var animId = null;
-    var MAX_PARTICLES = 100;
-    var CONNECT_DIST = 140;
-    var SPAWN_RATE = 4; // particles per frame while moving
+    var MAX_PARTICLES = 120;
+    var CONNECT_DIST = 150;
+    var SPAWN_RATE = 5; // particles per frame while moving
 
     function resize() {
         canvas.width = window.innerWidth;
@@ -1298,15 +1298,15 @@ function initCursorParticles() {
             if (particles.length >= MAX_PARTICLES) break;
             var angle = Math.random() * Math.PI * 2;
             var speed = 0.5 + Math.random() * 1.5;
-            var isAmber = Math.random() < 0.2; // 20% amber sparks
+            var isAmber = Math.random() < 0.25; // 25% amber sparks
             particles.push({
                 x: mouseX + (Math.random() - 0.5) * 10,
                 y: mouseY + (Math.random() - 0.5) * 10,
                 vx: Math.cos(angle) * speed,
                 vy: Math.sin(angle) * speed,
                 life: 1.0,
-                decay: 0.006 + Math.random() * 0.01,
-                size: 2 + Math.random() * 3,
+                decay: 0.005 + Math.random() * 0.008,
+                size: 2.5 + Math.random() * 3.5,
                 color: isAmber
                     ? (isDark ? '245, 158, 11' : '217, 119, 6')    // amber
                     : (isDark ? '59, 130, 246' : '37, 99, 235')    // blue
@@ -1392,21 +1392,15 @@ function initCursorGlow() {
         return;
     }
 
-    // Create glow elements
+    // Create glow spotlight
     var glow = document.createElement('div');
     glow.className = 'cursor-glow';
     document.body.appendChild(glow);
-
-    var ring = document.createElement('div');
-    ring.className = 'cursor-glow-ring';
-    document.body.appendChild(ring);
 
     var mouseX = -100;
     var mouseY = -100;
     var glowX = -100;
     var glowY = -100;
-    var ringX = -100;
-    var ringY = -100;
 
     // Interactive selectors that trigger the "expand" effect
     var interactiveSelectors = 'a, button, .btn, .social-icon-link, .project-card, .cert-card, .casefile-card, .blog-card, .contact-card, .nav-link, .theme-toggle-btn, input, textarea';
@@ -1418,7 +1412,6 @@ function initCursorGlow() {
         // Show glow after first mouse move
         if (!glow.classList.contains('visible')) {
             glow.classList.add('visible');
-            ring.classList.add('visible');
         }
 
         // Check if hovering over interactive element
@@ -1427,35 +1420,47 @@ function initCursorGlow() {
 
         if (isInteractive) {
             glow.classList.add('hovering-interactive');
-            ring.classList.add('hovering-interactive');
         } else {
             glow.classList.remove('hovering-interactive');
-            ring.classList.remove('hovering-interactive');
         }
     });
 
     document.addEventListener('mouseleave', function () {
         glow.classList.remove('visible');
-        ring.classList.remove('visible');
     });
 
     document.addEventListener('mouseenter', function () {
         glow.classList.add('visible');
-        ring.classList.add('visible');
+    });
+
+    // Click burst — spawn a burst element on every click
+    document.addEventListener('click', function (e) {
+        var burst = document.createElement('div');
+        burst.className = 'cursor-click-burst';
+        burst.style.left = e.clientX + 'px';
+        burst.style.top = e.clientY + 'px';
+        document.body.appendChild(burst);
+
+        // Trigger animation on next frame
+        requestAnimationFrame(function () {
+            burst.classList.add('active');
+        });
+
+        // Remove after animation
+        setTimeout(function () {
+            if (burst.parentNode) {
+                burst.parentNode.removeChild(burst);
+            }
+        }, 550);
     });
 
     // Smooth follow using lerp (linear interpolation)
-    // Glow dot follows tightly, ring follows with more lag = parallax feel
     function animate() {
-        glowX += (mouseX - glowX) * 0.2;
-        glowY += (mouseY - glowY) * 0.2;
-        ringX += (mouseX - ringX) * 0.08;
-        ringY += (mouseY - ringY) * 0.08;
+        glowX += (mouseX - glowX) * 0.15;
+        glowY += (mouseY - glowY) * 0.15;
 
         glow.style.left = glowX + 'px';
         glow.style.top = glowY + 'px';
-        ring.style.left = ringX + 'px';
-        ring.style.top = ringY + 'px';
 
         requestAnimationFrame(animate);
     }
@@ -1499,17 +1504,22 @@ function initSocialIconEffects() {
             var deltaX = (e.clientX - centerX) * 0.2;
             var deltaY = (e.clientY - centerY) * 0.2;
 
-            this.querySelector('i').style.transform =
-                'translate(' + deltaX + 'px, ' + deltaY + 'px)';
+            var inner = this.querySelector('i') || this.querySelector('.social-logo');
+            if (inner) {
+                inner.style.transform =
+                    'translate(' + deltaX + 'px, ' + deltaY + 'px)';
+            }
         });
 
         socialLinks[i].addEventListener('mouseleave', function () {
-            this.querySelector('i').style.transform = 'translate(0, 0)';
-            this.querySelector('i').style.transition = 'transform 0.3s ease';
-            var icon = this.querySelector('i');
-            setTimeout(function () {
-                icon.style.transition = '';
-            }, 300);
+            var inner = this.querySelector('i') || this.querySelector('.social-logo');
+            if (inner) {
+                inner.style.transform = 'translate(0, 0)';
+                inner.style.transition = 'transform 0.3s ease';
+                setTimeout(function () {
+                    inner.style.transition = '';
+                }, 300);
+            }
         });
     }
 }
