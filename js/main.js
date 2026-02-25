@@ -756,28 +756,96 @@ function initSmoothScroll() {
     }
 }
 
-/** Back to top button */
+/** Back to top button — with Goku flying animation on click */
 function initBackToTop() {
     var btn = document.getElementById('backToTop');
     if (!btn) return;
 
-    // Replace icon with rocket
-    btn.innerHTML = '<i class="bi bi-rocket-takeoff"></i>';
+    // Clean SVG upward arrow — always visible, no icon-font dependency
+    var arrowSVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/></svg>';
+
+    // Goku (Super Saiyan) flying upward — inline SVG pixel-art style
+    var gokuHTML = '<div class="goku-wrapper">' +
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 58" width="40" height="58" aria-hidden="true">' +
+            // Ki energy beams radiating upward
+            '<g opacity="0.75">' +
+                '<line x1="20" y1="2" x2="8" y2="16" stroke="#FFD700" stroke-width="1.5" opacity="0.5"/>' +
+                '<line x1="20" y1="2" x2="32" y2="16" stroke="#FFD700" stroke-width="1.5" opacity="0.5"/>' +
+                '<line x1="20" y1="1" x2="20" y2="18" stroke="#FFD700" stroke-width="2.5" opacity="0.9"/>' +
+                '<line x1="20" y1="2" x2="4"  y2="10" stroke="#FFD700" stroke-width="1"   opacity="0.35"/>' +
+                '<line x1="20" y1="2" x2="36" y2="10" stroke="#FFD700" stroke-width="1"   opacity="0.35"/>' +
+            '</g>' +
+            // Super Saiyan spiky golden hair
+            '<g fill="#FFD700" stroke="#B8860B" stroke-width="0.4">' +
+                '<polygon points="13,18 11,4  17,15"/>' +
+                '<polygon points="15,16 14,2  19,14"/>' +
+                '<polygon points="18,15 19,1  22,13"/>' +
+                '<polygon points="20,16 23,3  25,14"/>' +
+                '<polygon points="22,18 26,5  27,16"/>' +
+                '<polygon points="10,20 8,10  14,19"/>' +
+                '<polygon points="27,20 29,10 24,19"/>' +
+            '</g>' +
+            // Head (skin tone)
+            '<ellipse cx="20" cy="23" rx="7" ry="7" fill="#FDBCB4" stroke="#c9896a" stroke-width="0.5"/>' +
+            // Fierce eyebrows
+            '<path d="M14.5 21 Q16 19 17.5 21" fill="none" stroke="#2a1a00" stroke-width="1.3" stroke-linecap="round"/>' +
+            '<path d="M22.5 21 Q24 19 25.5 21" fill="none" stroke="#2a1a00" stroke-width="1.3" stroke-linecap="round"/>' +
+            // Eyes
+            '<circle cx="17"   cy="22.5" r="1.4" fill="#1a1a1a"/>' +
+            '<circle cx="23"   cy="22.5" r="1.4" fill="#1a1a1a"/>' +
+            '<circle cx="17.4" cy="22"   r="0.45" fill="white"/>' +
+            '<circle cx="23.4" cy="22"   r="0.45" fill="white"/>' +
+            // Neck
+            '<rect x="18" y="29" width="4" height="3" fill="#FDBCB4"/>' +
+            // Gi — blue undershirt base
+            '<path d="M11 32 L9 44 L31 44 L29 32 L24 32 L20 38 L16 32 Z" fill="#1a3c8c"/>' +
+            // Gi — orange top with chest split
+            '<path d="M12 32 L16 32 L20 39 L24 32 L28 32 L29 36 L24 32 L20 40 L16 32 L11 36 Z" fill="#FF6B00"/>' +
+            // Belt
+            '<rect x="10" y="40" width="20" height="3" rx="1.5" fill="#1a0a00"/>' +
+            // Gi pants (orange)
+            '<path d="M11 43 L10 56 L18 56 L20 48 L22 56 L30 56 L29 43 Z" fill="#FF6B00"/>' +
+            // Left arm — punching forward-upward
+            '<path d="M14 34 L5 24" stroke="#FDBCB4" stroke-width="3.8" stroke-linecap="round"/>' +
+            '<circle cx="4.5" cy="23.5" r="3.2" fill="#FDBCB4"/>' +
+            // Right arm — punching forward-upward
+            '<path d="M26 34 L35 24" stroke="#FDBCB4" stroke-width="3.8" stroke-linecap="round"/>' +
+            '<circle cx="35.5" cy="23.5" r="3.2" fill="#FDBCB4"/>' +
+            // Ki blasts in both hands
+            '<circle cx="4.5"  cy="23.5" r="5" fill="rgba(255,240,0,0.45)" stroke="#FFD700" stroke-width="0.6"/>' +
+            '<circle cx="35.5" cy="23.5" r="5" fill="rgba(255,240,0,0.45)" stroke="#FFD700" stroke-width="0.6"/>' +
+            // Aura glow beneath body
+            '<ellipse cx="20" cy="46" rx="13" ry="5" fill="rgba(255,215,0,0.3)"/>' +
+        '</svg>' +
+    '</div>' +
+    '<div class="goku-aura"></div>';
+
+    // Set the default arrow symbol
+    btn.innerHTML = arrowSVG;
 
     window.addEventListener('scroll', function () {
         if (window.scrollY > 500) {
             btn.classList.add('visible');
         } else {
+            // User has scrolled back to top — reset everything
             btn.classList.remove('visible');
+            if (btn.classList.contains('goku-flying')) {
+                btn.classList.remove('goku-flying');
+                btn.innerHTML = arrowSVG;
+            }
         }
     }, { passive: true });
 
     btn.addEventListener('click', function () {
-        btn.classList.add('launching');
+        // Prevent double-triggering while Goku is already flying
+        if (btn.classList.contains('goku-flying')) return;
+
+        // Swap arrow for Goku and start animation
+        btn.classList.add('goku-flying');
+        btn.innerHTML = gokuHTML;
+
+        // Smooth scroll to hero section
         window.scrollTo({ top: 0, behavior: 'smooth' });
-        setTimeout(function () {
-            btn.classList.remove('launching');
-        }, 800);
     });
 }
 
