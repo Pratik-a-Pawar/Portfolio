@@ -68,8 +68,8 @@
 /* ---- Cursor Glow Spotlight ---- */
 .cursor-glow {
     position: fixed;
-    width: 35px;
-    height: 35px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     pointer-events: none;
     z-index: 9998;
@@ -79,6 +79,7 @@
                 opacity 0.3s ease;
     opacity: 0;
     mix-blend-mode: screen;
+    will-change: left, top;
 }
 
 /* Dark mode: Electric cyan spotlight */
@@ -285,13 +286,28 @@ body {
 /* ---- Scroll Reveal ---- */
 .scroll-reveal {
     opacity: 0;
-    transform: translateY(30px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
+    transform: translateY(40px);
+    transition: opacity 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                transform 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                filter 0.7s ease;
+    filter: blur(4px);
 }
 
 .scroll-reveal.revealed {
     opacity: 1;
     transform: translateY(0);
+    filter: blur(0);
+}
+
+/* Cards get a slight scale entrance too */
+.scroll-reveal .project-card,
+.scroll-reveal .cert-card,
+.scroll-reveal .casefile-card,
+.scroll-reveal .blog-card,
+.scroll-reveal .education-card,
+.scroll-reveal .achievement-card,
+.scroll-reveal .contact-card {
+    transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease, opacity 0.5s ease;
 }
 
 /* ---- NAVBAR ---- */
@@ -1946,13 +1962,35 @@ html:not([data-theme="light"]) .theme-toggle-btn:hover .moon-shape {
     border-radius: var(--radius-md);
     padding: 1.5rem;
     text-align: center;
-    transition: all var(--transition-medium);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     height: 100%;
+    display: block;
 }
 
 .contact-card:hover {
     border-color: rgba(var(--accent-blue-rgb), 0.3);
-    box-shadow: var(--card-glow);
+    box-shadow: var(--card-glow-hover);
+    transform: translateY(-4px);
+}
+
+/* Clickable cards get cursor pointer + subtle arrow hint */
+.contact-card-clickable {
+    cursor: pointer;
+    position: relative;
+}
+
+.contact-card-clickable:hover {
+    border-color: var(--accent-blue);
+}
+
+.contact-card-clickable:active {
+    transform: translateY(-1px) scale(0.98);
+    transition-duration: 0.1s;
+}
+
+.contact-card-clickable .contact-card-value span {
+    color: var(--accent-blue);
+    font-size: 0.85rem;
 }
 
 .contact-card-icon {
@@ -2138,34 +2176,92 @@ html:not([data-theme="light"]) .theme-toggle-btn:hover .moon-shape {
     position: fixed;
     bottom: 2rem;
     right: 2rem;
-    width: 45px;
-    height: 45px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
-    background: var(--accent-blue);
-    color: #fff;
     border: none;
     font-size: 1.2rem;
     cursor: pointer;
     opacity: 0;
     visibility: hidden;
     transform: translateY(10px);
-    transition: all var(--transition-medium);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     z-index: 999;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 15px rgba(var(--accent-blue-rgb), 0.4);
+    overflow: hidden;
+}
+
+/* Dark mode: Electric cyan */
+[data-theme="dark"] .back-to-top,
+.back-to-top {
+    background: linear-gradient(135deg, #38bdf8, #0ea5e9);
+    color: #0a0e1a;
+    box-shadow: 0 4px 20px rgba(56, 189, 248, 0.4),
+                0 0 40px rgba(56, 189, 248, 0.1);
+}
+
+/* Light mode: Vibrant coral-orange */
+[data-theme="light"] .back-to-top {
+    background: linear-gradient(135deg, #f97316, #ea580c);
+    color: #ffffff;
+    box-shadow: 0 4px 20px rgba(249, 115, 22, 0.4),
+                0 0 40px rgba(249, 115, 22, 0.1);
 }
 
 .back-to-top.visible {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
+    animation: backToTopFloat 3s ease-in-out infinite;
 }
 
 .back-to-top:hover {
-    background: #2563eb;
-    transform: translateY(-3px);
+    transform: translateY(-5px) scale(1.1);
+    animation: none;
+}
+
+[data-theme="dark"] .back-to-top:hover,
+.back-to-top:hover {
+    box-shadow: 0 8px 30px rgba(56, 189, 248, 0.55),
+                0 0 50px rgba(56, 189, 248, 0.15);
+}
+
+[data-theme="light"] .back-to-top:hover {
+    box-shadow: 0 8px 30px rgba(249, 115, 22, 0.55),
+                0 0 50px rgba(249, 115, 22, 0.15);
+}
+
+.back-to-top:active {
+    transform: translateY(-2px) scale(0.95);
+    transition-duration: 0.1s;
+}
+
+/* Rocket launch animation on click */
+.back-to-top.launching {
+    animation: rocketLaunch 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+.back-to-top.launching i {
+    animation: rocketShake 0.15s ease-in-out 3;
+}
+
+@keyframes backToTopFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+
+@keyframes rocketLaunch {
+    0% { transform: translateY(0) scale(1); }
+    40% { transform: translateY(5px) scale(1.15); }
+    100% { transform: translateY(-20px) scale(0.9); opacity: 0.7; }
+}
+
+@keyframes rocketShake {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-4deg); }
+    75% { transform: rotate(4deg); }
 }
 
 /* ---- PRINT STYLES ---- */

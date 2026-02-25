@@ -250,44 +250,37 @@ const BLOG_POSTS = [
     // }
 ];
 
-/** Contact information — email and LinkedIn stored as Base64 segments for obfuscation */
+/** Contact information — privacy-first: no emails or URLs displayed */
 const CONTACT_INFO = [
     {
         label: 'Email',
         icon: 'bi-envelope-fill',
-        maskedValue: 'p*****@hotmail.com',
-        // Base64-encoded segments for obfuscation (assembled in JS, not stored as plaintext in HTML)
-        valueParts: ['cGF3YXIu', 'cHJhdGlr', 'QGhvdG1haWwuY29t'],
-        isMasked: true,
-        isLink: true,
-        linkPrefix: 'mailto:'
+        displayValue: 'Click to email me',
+        clickUrl: 'mailto:pawar.pratik@hotmail.com',
+        isClickable: true,
+        openInNewTab: false
     },
     {
         label: 'LinkedIn',
         icon: 'bi-linkedin',
-        maskedValue: 'linkedin.com/in/p*****',
-        valueParts: ['aHR0cHM6Ly93d3cubGlua2VkaW4uY29tL2luL3ByYXRpay1hLXBhd2FyLw=='],
-        isMasked: true,
-        isLink: true,
-        linkPrefix: ''
+        displayValue: 'Connect with me',
+        clickUrl: 'https://www.linkedin.com/in/pratik-a-pawar/',
+        isClickable: true,
+        openInNewTab: true
     },
     {
         label: 'GitHub',
         icon: 'bi-github',
-        maskedValue: null,
-        fullValue: 'github.com/Pratik-a-Pawar',
-        fullUrl: 'https://github.com/Pratik-a-Pawar',
-        isMasked: false,
-        isLink: true,
-        linkPrefix: ''
+        displayValue: 'View my projects',
+        clickUrl: 'https://github.com/Pratik-a-Pawar',
+        isClickable: true,
+        openInNewTab: true
     },
     {
         label: 'Location',
         icon: 'bi-geo-alt-fill',
-        maskedValue: null,
-        fullValue: 'Pune, Maharashtra, India',
-        isMasked: false,
-        isLink: false
+        displayValue: 'Pune, Maharashtra, India',
+        isClickable: false
     }
 ];
 
@@ -654,7 +647,7 @@ function renderBlog() {
     container.innerHTML = html;
 }
 
-/** Render contact cards with eye-toggle reveal */
+/** Render contact cards — clickable, privacy-first (no emails/URLs displayed) */
 function renderContact() {
     var container = document.getElementById('contactContainer');
     if (!container) return;
@@ -662,35 +655,30 @@ function renderContact() {
     for (var i = 0; i < CONTACT_INFO.length; i++) {
         var info = CONTACT_INFO[i];
         html += '<div class="col-lg-3 col-md-6 mb-4 scroll-reveal">';
-        html += '<div class="contact-card">';
+
+        if (info.isClickable) {
+            html += '<a href="' + escapeHtml(info.clickUrl) + '"' +
+                    (info.openInNewTab ? ' target="_blank" rel="noopener noreferrer"' : '') +
+                    ' class="contact-card contact-card-clickable" style="text-decoration:none;color:inherit;">';
+        } else {
+            html += '<div class="contact-card">';
+        }
+
         html += '<div class="contact-card-icon"><i class="bi ' + info.icon + '"></i></div>';
         html += '<div class="contact-card-label">' + escapeHtml(info.label) + '</div>';
         html += '<div class="contact-card-value">';
+        html += '<span>' + escapeHtml(info.displayValue) + '</span>';
+        html += '</div>';
 
-        if (info.isMasked) {
-            html += '<span class="contact-masked-value" id="contactVal' + i + '">' + escapeHtml(info.maskedValue) + '</span>';
-            html += '<button class="eye-toggle-btn" data-contact-index="' + i + '" aria-label="Reveal ' + escapeHtml(info.label) + '">';
-            html += '<i class="bi bi-eye"></i>';
-            html += '</button>';
-        } else if (info.isLink) {
-            html += '<a href="' + escapeHtml(info.fullUrl) + '" target="_blank" rel="noopener noreferrer" style="color:var(--accent-blue);text-decoration:none;">' + escapeHtml(info.fullValue) + '</a>';
+        if (info.isClickable) {
+            html += '</a>';
         } else {
-            html += '<span>' + escapeHtml(info.fullValue) + '</span>';
+            html += '</div>';
         }
 
         html += '</div>';
-        if (info.isMasked) {
-            html += '<div class="reveal-countdown" id="contactCountdown' + i + '"><div class="reveal-countdown-fill" id="contactCountdownFill' + i + '"></div></div>';
-        }
-        html += '</div></div>';
     }
     container.innerHTML = html;
-
-    // Attach eye-toggle event listeners
-    var toggleBtns = container.querySelectorAll('.eye-toggle-btn');
-    for (var b = 0; b < toggleBtns.length; b++) {
-        toggleBtns[b].addEventListener('click', handleContactReveal);
-    }
 }
 
 
@@ -773,6 +761,9 @@ function initBackToTop() {
     var btn = document.getElementById('backToTop');
     if (!btn) return;
 
+    // Replace icon with rocket
+    btn.innerHTML = '<i class="bi bi-rocket-takeoff"></i>';
+
     window.addEventListener('scroll', function () {
         if (window.scrollY > 500) {
             btn.classList.add('visible');
@@ -782,7 +773,11 @@ function initBackToTop() {
     }, { passive: true });
 
     btn.addEventListener('click', function () {
+        btn.classList.add('launching');
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        setTimeout(function () {
+            btn.classList.remove('launching');
+        }, 800);
     });
 }
 
@@ -792,11 +787,19 @@ function initScrollReveal() {
     if (!elements.length) return;
 
     if (!('IntersectionObserver' in window)) {
-        // Fallback: show all immediately
         for (var i = 0; i < elements.length; i++) {
             elements[i].classList.add('revealed');
         }
         return;
+    }
+
+    // Assign staggered delays to sibling reveal elements
+    var sections = document.querySelectorAll('section');
+    for (var s = 0; s < sections.length; s++) {
+        var reveals = sections[s].querySelectorAll('.scroll-reveal');
+        for (var r = 0; r < reveals.length; r++) {
+            reveals[r].style.transitionDelay = (r * 0.08) + 's';
+        }
     }
 
     var observer = new IntersectionObserver(function (entries) {
@@ -807,8 +810,8 @@ function initScrollReveal() {
             }
         }
     }, {
-        threshold: 0.1,
-        rootMargin: '-50px'
+        threshold: 0.08,
+        rootMargin: '-30px'
     });
 
     for (var i = 0; i < elements.length; i++) {
@@ -1319,8 +1322,9 @@ function initCursorParticles() {
             var p = particles[i];
             p.x += p.vx;
             p.y += p.vy;
-            p.vx *= 0.99;
-            p.vy *= 0.99;
+            p.vx *= 0.985;
+            p.vy *= 0.985;
+            p.vy += 0.01; // subtle gravity drift
             p.life -= p.decay;
             if (p.life <= 0) {
                 particles.splice(i, 1);
@@ -1338,12 +1342,12 @@ function initCursorParticles() {
                 var dy = particles[i].y - particles[j].y;
                 var dist = Math.sqrt(dx * dx + dy * dy);
                 if (dist < CONNECT_DIST) {
-                    var alpha = (1 - dist / CONNECT_DIST) * Math.min(particles[i].life, particles[j].life) * 0.4;
+                    var alpha = (1 - dist / CONNECT_DIST) * Math.min(particles[i].life, particles[j].life) * 0.5;
                     ctx.beginPath();
                     ctx.moveTo(particles[i].x, particles[i].y);
                     ctx.lineTo(particles[j].x, particles[j].y);
                     ctx.strokeStyle = 'rgba(' + particles[i].color + ', ' + alpha + ')';
-                    ctx.lineWidth = 0.5;
+                    ctx.lineWidth = 0.7;
                     ctx.stroke();
                 }
             }
@@ -1357,13 +1361,13 @@ function initCursorParticles() {
             // Glow
             ctx.beginPath();
             ctx.arc(p.x, p.y, p.size * 3, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(' + p.color + ', ' + (alpha * 0.15) + ')';
+            ctx.fillStyle = 'rgba(' + p.color + ', ' + (alpha * 0.2) + ')';
             ctx.fill();
 
             // Core
             ctx.beginPath();
             ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(' + p.color + ', ' + alpha + ')';
+            ctx.fillStyle = 'rgba(' + p.color + ', ' + (alpha * 0.95) + ')';
             ctx.fill();
         }
     }
@@ -1454,10 +1458,10 @@ function initCursorGlow() {
         }, 550);
     });
 
-    // Smooth follow using lerp (linear interpolation)
+    // Smooth follow using lerp — tight follow for natural feel
     function animate() {
-        glowX += (mouseX - glowX) * 0.15;
-        glowY += (mouseY - glowY) * 0.15;
+        glowX += (mouseX - glowX) * 0.25;
+        glowY += (mouseY - glowY) * 0.25;
 
         glow.style.left = glowX + 'px';
         glow.style.top = glowY + 'px';
