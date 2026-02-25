@@ -649,6 +649,10 @@ function renderBlog() {
     container.innerHTML = html;
 }
 
+/* Inline SVG eyes — no icon-font dependency, always render */
+var EYE_CLOSED_SVG = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+var EYE_OPEN_SVG   = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3.5" fill="currentColor" opacity="0.35"/><circle cx="12" cy="12" r="3"/></svg>';
+
 /** Render contact cards */
 function renderContact() {
     var container = document.getElementById('contactContainer');
@@ -662,10 +666,10 @@ function renderContact() {
             /* ── Email card: hover-to-show eye button, click to decrypt ── */
             html += '<div class="contact-card email-reveal-card" id="emailRevealCard">';
 
-            /* Eye button — single icon, visible only on card hover */
+            /* Eye button — inline SVG, visible only on card hover */
             html += '<button class="eye-reveal-btn" id="eyeRevealBtn"' +
                     ' aria-label="Reveal email address" title="Click to reveal email">' +
-                    '<i class="bi bi-eye-slash" id="eyeIcon"></i>' +
+                    EYE_CLOSED_SVG +
                     '</button>';
 
             html += '<div class="contact-card-icon"><i class="bi ' + info.icon + '"></i></div>';
@@ -1200,7 +1204,6 @@ function initTriageDemo() {
 /** Email reveal: eye open → decrypt → 9-second display → encrypt → eye close */
 function handleEmailReveal() {
     var btn    = document.getElementById('eyeRevealBtn');
-    var iconEl = document.getElementById('eyeIcon');
     var textEl = document.getElementById('emailTextReveal');
     var cdBar  = document.getElementById('emailCountdown');
     var cdFill = document.getElementById('emailCountdownFill');
@@ -1222,7 +1225,7 @@ function handleEmailReveal() {
     setTimeout(function () {
         btn.classList.remove('eye-opening');
         btn.classList.add('eye-open');
-        if (iconEl) iconEl.className = 'bi bi-eye';   // show open eye
+        btn.innerHTML = EYE_OPEN_SVG;   // swap to open eye
 
         /* PHASE 2 — Decrypt: characters cycle then lock in */
         textEl.textContent = '';
@@ -1310,7 +1313,7 @@ function handleEmailReveal() {
                             /* PHASE 5 — Eye closing (500 ms) */
                             btn.classList.remove('eye-open');
                             btn.classList.add('eye-closing');
-                            if (iconEl) iconEl.className = 'bi bi-eye-slash'; // back to closed
+                            btn.innerHTML = EYE_CLOSED_SVG;   // back to closed eye
 
                             setTimeout(function () {
                                 btn.classList.remove('eye-closing');
