@@ -260,7 +260,7 @@ body {
     color: var(--text-primary);
     text-align: center;
     position: relative;
-    z-index: 5;
+    z-index: 10;
 }
 
 .heading-accent {
@@ -275,7 +275,7 @@ body {
     margin-bottom: 3rem;
     font-size: 1.05rem;
     position: relative;
-    z-index: 5;
+    z-index: 10;
 }
 
 .section-label {
@@ -1426,6 +1426,7 @@ html:not([data-theme="light"]) .theme-toggle-btn:hover .moon-shape {
     border: 1px solid var(--border-color);
     border-radius: var(--radius-lg);
     padding: 2.5rem;
+    margin-top: 1.5rem;
     margin-bottom: 2rem;
     transition: all var(--transition-medium);
     position: relative;
@@ -1443,8 +1444,7 @@ html:not([data-theme="light"]) .theme-toggle-btn:hover .moon-shape {
 }
 
 .project-showcase:hover {
-    box-shadow: var(--card-glow-hover);
-    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(var(--accent-blue-rgb), 0.2);
     z-index: 2;
 }
 
@@ -2066,12 +2066,14 @@ html:not([data-theme="light"]) .theme-toggle-btn:hover .moon-shape {
     font-weight: 600;
 }
 
-/* Clickable cards without displayValue — make label the primary text */
-.contact-card-clickable .contact-card-label {
+/* Clickable cards AND email-reveal card — make label the primary text */
+.contact-card-clickable .contact-card-label,
+.email-reveal-card .contact-card-label {
     font-size: 0.95rem;
     color: var(--text-primary);
     margin-bottom: 0;
     letter-spacing: 0.8px;
+    font-weight: 700;
 }
 
 /* Override browser link/visited color on clickable contact cards */
