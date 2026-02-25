@@ -2210,10 +2210,10 @@ html:not([data-theme="light"]) .theme-toggle-btn:hover .moon-shape {
     text-shadow: 0 0 10px rgba(56, 189, 248, 0.45);
     letter-spacing: 0.02em;
     /* Prevent text selection / copying */
-    user-select: none;
+    -ms-user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
-    -ms-user-select: none;
+    user-select: none;
 }
 
 /* Text slides in when revealed */
