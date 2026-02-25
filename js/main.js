@@ -322,7 +322,9 @@ document.addEventListener('DOMContentLoaded', function () {
         initTriageDemo,
         initResumeViewer,
         initConsoleEasterEgg,
-        initCursorParticles
+        initCursorParticles,
+        initSocialIconEffects,
+        initMagneticTilt
     ];
     for (var i = 0; i < initFns.length; i++) {
         try { initFns[i](); } catch (e) { console.error(initFns[i].name + ' failed:', e); }
@@ -1372,4 +1374,118 @@ function initCursorParticles() {
     }
 
     loop();
+}
+
+/* ============================================
+   SOCIAL ICON CLICK EFFECTS
+   ============================================ */
+
+/**
+ * Adds a ripple burst animation on social icon click.
+ * The ripple element expands outward and fades, giving
+ * satisfying tactile feedback without being distracting.
+ */
+function initSocialIconEffects() {
+    var socialLinks = document.querySelectorAll('.social-icon-link');
+
+    for (var i = 0; i < socialLinks.length; i++) {
+        socialLinks[i].addEventListener('click', function () {
+            var link = this;
+            // Remove previous animation if still running
+            link.classList.remove('clicked');
+            // Force reflow to restart animation
+            void link.offsetWidth;
+            link.classList.add('clicked');
+
+            // Clean up class after animation completes
+            setTimeout(function () {
+                link.classList.remove('clicked');
+            }, 600);
+        });
+
+        // Magnetic pull effect — icon subtly follows cursor within the circle
+        socialLinks[i].addEventListener('mousemove', function (e) {
+            var rect = this.getBoundingClientRect();
+            var centerX = rect.left + rect.width / 2;
+            var centerY = rect.top + rect.height / 2;
+            var deltaX = (e.clientX - centerX) * 0.2;
+            var deltaY = (e.clientY - centerY) * 0.2;
+
+            this.querySelector('i').style.transform =
+                'translate(' + deltaX + 'px, ' + deltaY + 'px)';
+        });
+
+        socialLinks[i].addEventListener('mouseleave', function () {
+            this.querySelector('i').style.transform = 'translate(0, 0)';
+            this.querySelector('i').style.transition = 'transform 0.3s ease';
+            var icon = this.querySelector('i');
+            setTimeout(function () {
+                icon.style.transition = '';
+            }, 300);
+        });
+    }
+}
+
+
+/* ============================================
+   MAGNETIC TILT EFFECT ON CARDS
+   ============================================ */
+
+/**
+ * Adds a subtle 3D tilt effect to major cards across the site.
+ * The card tilts toward the cursor position, creating a "data panel"
+ * feel that's cool without being distracting or "fancy."
+ *
+ * Uses perspective transform — max tilt is kept low (4deg) for subtlety.
+ */
+function initMagneticTilt() {
+    // Skip on touch-only devices
+    if (window.matchMedia && window.matchMedia('(pointer: coarse) and (hover: none)').matches) {
+        return;
+    }
+
+    var tiltSelectors = [
+        '.project-card',
+        '.cert-card',
+        '.casefile-card',
+        '.blog-card',
+        '.education-card',
+        '.achievement-card',
+        '.contact-card',
+        '.experience-item'
+    ];
+
+    var cards = document.querySelectorAll(tiltSelectors.join(','));
+    var MAX_TILT = 4; // degrees — subtle, not fancy
+
+    for (var i = 0; i < cards.length; i++) {
+        (function (card) {
+            card.addEventListener('mousemove', function (e) {
+                var rect = card.getBoundingClientRect();
+                var x = e.clientX - rect.left;
+                var y = e.clientY - rect.top;
+                var centerX = rect.width / 2;
+                var centerY = rect.height / 2;
+
+                // Normalize to -1 to 1
+                var rotateY = ((x - centerX) / centerX) * MAX_TILT;
+                var rotateX = ((centerY - y) / centerY) * MAX_TILT;
+
+                card.style.transform =
+                    'perspective(800px) rotateX(' + rotateX + 'deg) rotateY(' + rotateY + 'deg) translateY(-4px)';
+            });
+
+            card.addEventListener('mouseleave', function () {
+                card.style.transform = '';
+                card.style.transition = 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease';
+                setTimeout(function () {
+                    card.style.transition = '';
+                }, 500);
+            });
+
+            card.addEventListener('mouseenter', function () {
+                card.style.transition = 'box-shadow 0.35s ease';
+            });
+        })(cards[i]);
+    }
 }
