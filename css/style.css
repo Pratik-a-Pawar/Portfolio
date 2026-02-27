@@ -1003,6 +1003,8 @@ html:not([data-theme="light"]) .theme-toggle-btn:hover .moon-shape {
     object-fit: cover;
     display: block;
     -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
     user-select: none;
     pointer-events: none;
 }
@@ -2222,9 +2224,9 @@ a.contact-card-clickable:link .contact-card-label {
     text-shadow: 0 0 10px rgba(56, 189, 248, 0.45);
     letter-spacing: 0.02em;
     /* Prevent text selection / copying */
-    -ms-user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
+    -ms-user-select: none;
     user-select: none;
 }
 
@@ -3064,10 +3066,10 @@ section.section-padding.glow-active {
    RESUME CANVAS PROTECTION
    ============================================ */
 .resume-page-wrapper {
-    user-select: none !important;
     -webkit-user-select: none !important;
     -moz-user-select: none !important;
     -ms-user-select: none !important;
+    user-select: none !important;
     -webkit-touch-callout: none;
 }
 .resume-page-wrapper canvas {
@@ -3077,6 +3079,7 @@ section.section-padding.glow-active {
 }
 #resumeContent {
     -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
 }
 /* Discourage print/screenshot of resume */
 @media print {
