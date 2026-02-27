@@ -72,31 +72,36 @@ const CERTIFICATIONS = [
         title: 'CompTIA Security+ SY0-701',
         issuer: 'CompTIA',
         status: 'completed',
-        icon: 'bi-shield-fill-check'
+        icon: 'bi-shield-fill-check',
+        url: 'https://www.credly.com/badges/0fc779c9-35c7-41c7-ad68-607ea2942eed'
     },
     {
-        title: 'Google Cybersecurity Specialization',
+        title: 'Google Cybersecurity',
         issuer: 'Coursera (Google)',
         status: 'completed',
-        icon: 'bi-google'
+        icon: 'bi-google',
+        url: 'https://www.coursera.org/account/accomplishments/professional-cert/4MSZX0BVHT8Q'
     },
     {
         title: 'Cisco SOC (Security Operations Center)',
         issuer: 'Coursera (Cisco)',
         status: 'completed',
-        icon: 'bi-hdd-network'
+        icon: 'bi-hdd-network',
+        url: 'https://www.coursera.org/account/accomplishments/verify/UU7OYGVD8RLN'
     },
     {
         title: 'TryHackMe SAL1 (Security Analyst Level 1)',
         issuer: 'TryHackMe',
         status: 'in_progress',
-        icon: 'bi-flag'
+        icon: 'bi-flag',
+        url: null
     },
     {
         title: 'TryHackMe PT1 (Junior Penetration Tester)',
         issuer: 'TryHackMe',
         status: 'in_progress',
-        icon: 'bi-bug'
+        icon: 'bi-bug',
+        url: null
     }
 ];
 
@@ -195,19 +200,19 @@ const TRIAGE_STEPS = [
 const EXPERIENCE = [
     {
         title: 'LetsDefend SOC Analyst Training',
-        period: '2024 – Present',
+        period: '2025 – Present',
         description: 'Completed real-world SOC alert triage scenarios including phishing analysis, malware alerts, and suspicious network activity investigations. Practiced incident escalation and documentation procedures.',
         icon: 'bi-shield-fill'
     },
     {
         title: 'TryHackMe Hands-On Labs',
-        period: '2024 – Present',
+        period: '2025 – Present',
         description: 'Active on TryHackMe completing rooms in network security, web application security, and incident response. Currently on the SAL1 (Security Analyst Level 1) and PT1 (Junior Penetration Tester) learning paths.',
         icon: 'bi-terminal-fill'
     },
     {
         title: 'n8n Security Automation Development',
-        period: '2024',
+        period: '2025 – Present',
         description: 'Built and deployed a phishing email analysis automation pipeline using n8n, integrating multiple threat intelligence APIs. Reduced manual triage effort by approximately 50%.',
         icon: 'bi-gear-wide-connected'
     }
@@ -431,12 +436,22 @@ function renderCertifications() {
         var badgeClass = cert.status === 'completed' ? 'cert-badge-completed' : 'cert-badge-progress';
         var badgeText = cert.status === 'completed' ? '<i class="bi bi-check-circle-fill"></i> Completed' : '<i class="bi bi-arrow-repeat"></i> In Progress';
         html += '<div class="col-lg-4 col-md-6 mb-4 scroll-reveal">';
+        if (cert.url) {
+            html += '<a href="' + escapeHtml(cert.url) + '" target="_blank" rel="noopener noreferrer" class="cert-card-link" style="text-decoration:none;color:inherit;display:block;height:100%;">';
+        }
         html += '<div class="cert-card">';
         html += '<div class="cert-icon"><i class="bi ' + cert.icon + '"></i></div>';
         html += '<div class="cert-card-title">' + escapeHtml(cert.title) + '</div>';
         html += '<div class="cert-issuer">' + escapeHtml(cert.issuer) + '</div>';
         html += '<div class="cert-badge ' + badgeClass + '">' + badgeText + '</div>';
-        html += '</div></div>';
+        if (cert.url) {
+            html += '<div class="cert-verify-hint"><i class="bi bi-box-arrow-up-right me-1"></i>Verify</div>';
+        }
+        html += '</div>';
+        if (cert.url) {
+            html += '</a>';
+        }
+        html += '</div>';
     }
     container.innerHTML = html;
 }
@@ -1474,8 +1489,12 @@ function initResumeViewer() {
             if (placeholder) placeholder.classList.add('d-none');
             if (content) {
                 content.classList.remove('d-none');
-                // Render as embedded object or image
-                content.innerHTML = '<embed src="data:application/pdf;base64,' + RESUME_BASE64 + '" type="application/pdf" width="100%" height="700px" style="border:none;pointer-events:auto;">';
+
+                // Only render once
+                if (!content.hasAttribute('data-rendered')) {
+                    content.setAttribute('data-rendered', 'true');
+                    renderResumePdf(content);
+                }
             }
         }
 
@@ -1487,6 +1506,135 @@ function initResumeViewer() {
         if (typeof trackEvent === 'function') {
             trackEvent('resume_view');
         }
+    });
+}
+
+/**
+ * Render PDF as canvas pages using PDF.js with clickable link overlays.
+ * Prevents download while keeping embedded links functional.
+ */
+function renderResumePdf(container) {
+    if (typeof pdfjsLib === 'undefined') {
+        container.innerHTML = '<p class="text-center text-muted">PDF viewer is loading. Please try again.</p>';
+        return;
+    }
+
+    // Configure PDF.js worker
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    // Decode base64 to binary
+    var binaryStr = atob(RESUME_BASE64);
+    var bytes = new Uint8Array(binaryStr.length);
+    for (var i = 0; i < binaryStr.length; i++) {
+        bytes[i] = binaryStr.charCodeAt(i);
+    }
+
+    // Show loading state
+    container.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-primary" role="status"></div><p class="mt-2 text-muted">Loading resume…</p></div>';
+
+    pdfjsLib.getDocument({ data: bytes }).promise.then(function (pdf) {
+        container.innerHTML = '';
+
+        // Render each page
+        var renderChain = Promise.resolve();
+        for (var p = 1; p <= pdf.numPages; p++) {
+            (function (pageNum) {
+                renderChain = renderChain.then(function () {
+                    return renderPdfPage(pdf, pageNum, container);
+                });
+            })(p);
+        }
+
+        renderChain.catch(function (err) {
+            console.error('PDF render error:', err);
+            container.innerHTML = '<p class="text-center text-danger">Failed to load resume. Please try again later.</p>';
+        });
+    }).catch(function (err) {
+        console.error('PDF load error:', err);
+        container.innerHTML = '<p class="text-center text-danger">Failed to load resume.</p>';
+    });
+}
+
+/**
+ * Render a single PDF page as a canvas with clickable link annotations overlaid.
+ */
+function renderPdfPage(pdf, pageNum, container) {
+    return pdf.getPage(pageNum).then(function (page) {
+        // Use 2x scale for crisp rendering, then CSS scale down
+        var scale = 2;
+        var viewport = page.getViewport({ scale: scale });
+
+        // Page wrapper — positioned relative for link overlays
+        var pageWrapper = document.createElement('div');
+        pageWrapper.className = 'resume-page-wrapper';
+        pageWrapper.style.position = 'relative';
+        pageWrapper.style.width = '100%';
+        pageWrapper.style.maxWidth = (viewport.width / scale) + 'px';
+        pageWrapper.style.margin = '0 auto 16px auto';
+        pageWrapper.style.userSelect = 'none';
+        pageWrapper.style.webkitUserSelect = 'none';
+
+        // Canvas for the page
+        var canvas = document.createElement('canvas');
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        canvas.style.width = '100%';
+        canvas.style.height = 'auto';
+        canvas.style.display = 'block';
+        canvas.style.pointerEvents = 'none';
+        canvas.setAttribute('draggable', 'false');
+
+        pageWrapper.appendChild(canvas);
+        container.appendChild(pageWrapper);
+
+        // Render the page to canvas
+        var ctx = canvas.getContext('2d');
+        return page.render({ canvasContext: ctx, viewport: viewport }).promise.then(function () {
+            // Now extract link annotations and overlay clickable elements
+            return page.getAnnotations();
+        }).then(function (annotations) {
+            var displayScale = pageWrapper.offsetWidth / (viewport.width / scale);
+
+            for (var a = 0; a < annotations.length; a++) {
+                var ann = annotations[a];
+                if (ann.subtype === 'Link' && ann.url) {
+                    // Convert PDF coordinates to CSS positions
+                    var rect = ann.rect; // [x1, y1, x2, y2] in PDF units
+                    var pdfPageHeight = viewport.height / scale;
+
+                    var left = rect[0] * displayScale;
+                    var bottom = rect[1] * displayScale;
+                    var right = rect[2] * displayScale;
+                    var top = rect[3] * displayScale;
+
+                    var linkEl = document.createElement('a');
+                    linkEl.href = ann.url;
+                    linkEl.target = '_blank';
+                    linkEl.rel = 'noopener noreferrer';
+                    linkEl.title = ann.url;
+                    linkEl.style.position = 'absolute';
+                    linkEl.style.left = left + 'px';
+                    linkEl.style.top = (pdfPageHeight * displayScale - top) + 'px';
+                    linkEl.style.width = (right - left) + 'px';
+                    linkEl.style.height = (top - bottom) + 'px';
+                    linkEl.style.cursor = 'pointer';
+                    linkEl.style.zIndex = '2';
+                    // Transparent overlay — visible on hover
+                    linkEl.style.background = 'transparent';
+                    linkEl.style.border = 'none';
+                    linkEl.style.borderRadius = '2px';
+                    linkEl.style.transition = 'background 0.2s ease';
+                    linkEl.addEventListener('mouseenter', function () {
+                        this.style.background = 'rgba(59, 130, 246, 0.12)';
+                    });
+                    linkEl.addEventListener('mouseleave', function () {
+                        this.style.background = 'transparent';
+                    });
+
+                    pageWrapper.appendChild(linkEl);
+                }
+            }
+        });
     });
 }
 
