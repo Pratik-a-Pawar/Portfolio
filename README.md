@@ -1,154 +1,186 @@
 # Pratik Anil Pawar — Cybersecurity Portfolio
 
-A production-ready, security-hardened single-page portfolio website built with pure HTML5, CSS3, and vanilla JavaScript. Designed for GitHub Pages hosting.
+**Information Security & Cybersecurity Fresher | SOC Analyst | Blue Teamer**
+
+🔗 **Live Site:** [pratik-a-pawar.github.io/Portfolio](https://pratik-a-pawar.github.io/Portfolio/)
+
+---
+
+## Who I Am
+
+Cybersecurity fresher with a B.Sc. in Electronics (CGPA 9.47/10) from Solapur University. I hold **CompTIA Security+ (SY0-701)**, **Google Cybersecurity**, and **Cisco SOC** certifications, with hands-on training through LetsDefend and TryHackMe.
+
+I built an **n8n-based Phishing Email Analyzer** that automates IOC enrichment, threat classification, and MITRE ATT&CK mapping — cutting manual triage effort by ~50%.
+
+Currently pursuing **TryHackMe SAL1** and **PT1** certifications while seeking an InfoSec Engineer / SOC Analyst L1 role in Mumbai, Maharashtra.
+
+---
+
+## What This Portfolio Demonstrates
+
+This is a production-ready, security-hardened single-page website built from scratch — no frameworks, no templates, no build tools. Every line was written to showcase the kind of defensive thinking I bring to security work.
+
+### Security Hardening
+
+- Content Security Policy (CSP) with strict directives
+- Frame busting and clickjacking prevention (`X-Frame-Options: DENY`)
+- PII obfuscation with Base64 encoding and auto-masking contact reveals (10-second timer)
+- Anti-scraping honeypots and bot detection
+- SRI integrity hashes on all CDN resources
+- View-only resume display (no download, no print, no save)
+- `robots.txt` blocking known scraper bots (AhrefsBot, SemrushBot, GPTBot, CCBot)
+
+### Interactive Features
+
+- Terminal-style "About Me" with typing animation (`pratik@soc:~$`)
+- Interactive radar chart for skills visualisation (canvas-rendered)
+- MITRE ATT&CK heatmap with hover tooltips showing hands-on exposure per tactic
+- Simulated alert triage walkthrough — from alert to verdict with MITRE mapping
+- Dark/light theme toggle with `localStorage` persistence
+- Scroll-reveal animations via `IntersectionObserver`
+- Scroll progress indicator with particle canvas effects
+
+---
 
 ## Tech Stack
 
-- **HTML5 + CSS3 + Vanilla JavaScript** — no build tools, no frameworks
-- **Bootstrap 5.3.2** (CDN with SRI integrity hashes) — layout and responsive grid
-- **Bootstrap Icons 1.11.1** (CDN with SRI) — iconography
-- **Google Fonts** — Inter (body) + JetBrains Mono (terminal/code)
+| Layer | Technology |
+|-------|-----------|
+| Markup | HTML5 (semantic, accessible, SEO-optimised) |
+| Styling | CSS3 + Bootstrap 5.3.2 (CDN with SRI) |
+| Logic | Vanilla JavaScript — zero dependencies |
+| Icons | Bootstrap Icons 1.11.1 (CDN with SRI) |
+| Fonts | Inter (body) + JetBrains Mono (terminal/code) via Google Fonts |
+| Resume | PDF.js 3.11.174 (CDN) for secure in-browser rendering |
+| Hosting | GitHub Pages |
+| Analytics | Umami (privacy-first, cookie-free, optional) |
 
-## Features
+---
 
-- Dark/light theme toggle with localStorage persistence
-- Terminal-style "About Me" with typing animation
-- Interactive radar chart for skills visualization
-- MITRE ATT&CK heatmap with hover tooltips
-- Simulated alert triage walkthrough demo
-- Privacy-first contact cards with temporary reveal (10-second auto-mask)
-- View-only resume display (no download)
-- Scroll-reveal animations via IntersectionObserver
-- Client-side security hardening (frame busting, PII obfuscation, anti-scraping)
-- Content Security Policy (CSP) meta tag
-- All sections rendered from JavaScript data arrays for easy expansion
+## Portfolio Sections
 
-## Setup — GitHub Pages Deployment
+| Section | Description |
+|---------|-------------|
+| **Hero** | Animated intro with SOC dashboard log ambiance and typed subtitle |
+| **Why Me?** | Quick-hit hiring pitch with core tools grid |
+| **About** | Terminal emulator with typed bio (`cat about.txt`) |
+| **Skills** | Radar chart + categorised skill cards (SOC, Tools, Scripting, Cloud) |
+| **MITRE ATT&CK** | Heatmap of 14 tactics with hands-on exposure indicators |
+| **Certifications** | Completed and in-progress certs with status badges |
+| **Projects** | Featured: n8n Phishing Analyzer. Upcoming: SOC Home Lab, Sigma Detection Pack, Wazuh Alert Automation |
+| **Casefiles** | Investigation walkthroughs — coming soon |
+| **Alert Triage Demo** | Step-by-step simulated phishing incident: alert → triage → IOC enrichment → verdict |
+| **Experience** | Training timeline: LetsDefend, TryHackMe, n8n development |
+| **Education** | Academic record |
+| **Achievement** | National Mathematics Day Quiz — 1st Rank, Solapur University (2023) |
+| **Blog** | Security writeups — coming soon |
+| **Contact** | Privacy-first masked contact cards with temporary reveal |
+
+---
+
+## Architecture
+
+All section content is rendered from JavaScript data arrays in `js/main.js`. To add or update content, edit the arrays — no HTML changes required.
+
+```
+Portfolio/
+├── index.html                # Single-page app shell (semantic HTML5)
+├── css/
+│   └── style.css             # All custom styles — dark/light themes, animations
+├── js/
+│   ├── main.js               # Data arrays + rendering engine
+│   ├── resume-data.js        # Base64-encoded resume PDF
+│   ├── security.js           # Client-side security hardening module
+│   └── analytics.js          # Umami analytics (opt-in, privacy-first)
+├── Logos/                    # Social & platform icons (LinkedIn, GitHub, Contact)
+├── Resume/                   # Resume source files (.pdf, .docx)
+├── Profile Photo.png         # Professional headshot
+├── _headers                  # Security headers for GitHub Pages
+├── robots.txt                # Bot access control
+├── .nojekyll                 # Bypass Jekyll processing
+└── README.md
+```
+
+---
+
+## Expanding Content
+
+| What to add | Where to edit |
+|-------------|---------------|
+| New projects | `PROJECTS` array in `js/main.js` |
+| Certifications | `CERTIFICATIONS` array in `js/main.js` |
+| Blog posts / writeups | `BLOG_POSTS` array in `js/main.js` |
+| Investigation casefiles | Replace `comingSoon: true` in `CASEFILES` array |
+| Skills | `SKILL_CATEGORIES` and `RADAR_DATA` in `js/main.js` |
+| Contact info | `CONTACT_INFO` array in `js/main.js` (Base64-encoded for privacy) |
+
+---
+
+<details>
+<summary><strong>🛠 Setup & Deployment Guide</strong> (click to expand)</summary>
 
 ### Prerequisites
 
 - A GitHub account
-- Git installed on your computer
-- (Optional) VS Code or any text editor
+- Git installed locally
+- Any text editor (VS Code recommended)
 
-### Step 1: Create Repository
-
-1. Go to [github.com/new](https://github.com/new)
-2. Repository name: `portfolio`
-3. Set visibility to **Public**
-4. Do NOT initialize with a README (we already have one)
-5. Click **Create repository**
-
-### Step 2: Clone the Repository
+### Step 1 — Clone the Repository
 
 ```bash
-git clone https://github.com/Pratik-a-Pawar/portfolio.git
+git clone https://github.com/Pratik-a-Pawar/Portfolio.git
+cd Portfolio
 ```
 
-### Step 3: Copy Portfolio Files
+### Step 2 — Add Your Resume
 
-Copy **all** portfolio files into the cloned directory:
+1. Open `js/resume-data.js`
+2. Encode your resume PDF to Base64 at [base64.guru/converter/encode/pdf](https://base64.guru/converter/encode/pdf)
+3. Replace the placeholder string with your Base64 output
+4. Save the file
 
-```
-portfolio/
-├── index.html
-├── css/
-│   └── style.css
-├── js/
-│   ├── main.js
-│   ├── resume-data.js
-│   ├── security.js
-│   └── analytics.js
-├── assets/
-├── Profile Photo.png
-├── .nojekyll
-├── _headers
-├── robots.txt
-└── README.md
-```
-
-### Step 4: Add Your Resume
-
-1. Open `js/resume-data.js` in a text editor
-2. Go to [base64.guru/converter/encode/pdf](https://base64.guru/converter/encode/pdf)
-3. Upload your resume PDF and copy the Base64 output
-4. Replace `PASTE_YOUR_BASE64_ENCODED_PDF_HERE` with the Base64 string
-5. Save the file
-
-### Step 5: Commit and Push
+### Step 3 — Commit and Push
 
 ```bash
-cd portfolio
 git add .
-git commit -m "Initial portfolio deployment"
+git commit -m "Update portfolio content"
 git push origin main
 ```
 
-### Step 6: Enable GitHub Pages
+### Step 4 — Enable GitHub Pages
 
-1. Go to your repository on GitHub
-2. Click **Settings** (gear icon)
-3. In the left sidebar, click **Pages**
-4. Under **Source**, select **Deploy from a branch**
-5. Under **Branch**, select **main** and folder **/ (root)**
-6. Click **Save**
+1. Go to **Settings → Pages** in your repository
+2. Source: **Deploy from a branch**
+3. Branch: **main**, folder: **/ (root)**
+4. Click **Save** and wait 2–3 minutes
 
-### Step 7: Visit Your Portfolio
-
-Wait 2-3 minutes for GitHub Pages to build, then visit:
-
-```
-https://pratik-a-pawar.github.io/portfolio
-```
-
-### Step 8: (Optional) Set Up Analytics
+### Step 5 — (Optional) Set Up Analytics
 
 1. Create a free account at [cloud.umami.is](https://cloud.umami.is)
-2. Add your website URL: `https://pratik-a-pawar.github.io/portfolio`
-3. Copy the **Website ID** from your Umami dashboard
-4. Open `js/analytics.js`
-5. Set `enabled: true`
-6. Replace `YOUR_UMAMI_WEBSITE_ID` with your Website ID
-7. Commit and push the changes
+2. Add your website URL
+3. Copy the Website ID
+4. Open `js/analytics.js`, set `enabled: true`, and paste the ID
+5. Commit and push
 
-## Troubleshooting
+### Troubleshooting
 
-### Site shows 404
+- **404 error:** Verify GitHub Pages is enabled and `index.html` is in the repo root.
+- **CSS/JS not loading:** File paths are case-sensitive on GitHub — check directory names.
+- **Photo not showing:** Filename must match exactly: `Profile Photo.png`.
+- **Resume not displaying:** Ensure the Base64 string is complete and does not include the `data:application/pdf;base64,` prefix.
 
-- Verify GitHub Pages is enabled in Settings > Pages
-- Ensure the branch is set to `main` and folder is `/ (root)`
-- Check that `index.html` is in the repository root (not in a subfolder)
-- Wait a few minutes — GitHub Pages can take time to deploy
+</details>
 
-### CSS/JS not loading
+---
 
-- Check that file paths are correct (case-sensitive on GitHub)
-- Verify the `css/` and `js/` directories exist
-- Clear your browser cache (Ctrl+Shift+R)
+## Connect
 
-### Profile photo not showing
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-pratik--a--pawar-0A66C2?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/pratik-a-pawar/)
+[![GitHub](https://img.shields.io/badge/GitHub-Pratik--a--Pawar-181717?style=flat&logo=github&logoColor=white)](https://github.com/Pratik-a-Pawar)
+[![Portfolio](https://img.shields.io/badge/Portfolio-Live_Site-3b82f6?style=flat&logo=googlechrome&logoColor=white)](https://pratik-a-pawar.github.io/Portfolio/)
 
-- Ensure `Profile Photo.png` is in the repository root
-- The filename is case-sensitive — it must match exactly
-
-### Resume not displaying
-
-- Verify the Base64 string in `resume-data.js` is complete and valid
-- The string should not include the `data:application/pdf;base64,` prefix
-- Try re-encoding your PDF if the output looks corrupted
-
-## Expanding the Portfolio
-
-All section content is driven by JavaScript data arrays in `js/main.js`. To add new content:
-
-- **Projects:** Add objects to the `PROJECTS` array
-- **Certifications:** Add objects to the `CERTIFICATIONS` array
-- **Blog posts:** Add objects to the `BLOG_POSTS` array
-- **Casefiles:** Replace `comingSoon: true` with actual content in `CASEFILES` array
-- **Skills:** Edit `SKILL_CATEGORIES` and `RADAR_DATA` arrays
-
-No HTML changes needed — the JS rendering functions handle everything.
+---
 
 ## License
 
-All rights reserved. This portfolio and its contents are the intellectual property of Pratik Anil Pawar.
+All rights reserved. This portfolio and its contents are the intellectual property of **Pratik Anil Pawar**.
