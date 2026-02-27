@@ -3087,3 +3087,20 @@ section.section-padding.glow-active {
         display: none !important;
     }
 }
+
+/* ============================================
+   ACHIEVEMENT VERIFY HINT
+   ============================================ */
+.achievement-verify-hint {
+    font-size: 0.75rem;
+    color: var(--accent-blue, #3b82f6);
+    margin-top: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.achievement-card:hover .achievement-verify-hint {
+    opacity: 1;
+}
+.achievement-card-link:focus .achievement-verify-hint {
+    opacity: 1;
+}

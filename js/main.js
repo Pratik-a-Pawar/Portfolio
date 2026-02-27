@@ -620,11 +620,15 @@ function renderAchievement() {
     var container = document.getElementById('achievementContainer');
     if (!container) return;
     var html = '<div class="col-md-8 col-lg-6 scroll-reveal">';
+    html += '<a href="https://drive.google.com/file/d/1DfjczXgJkYyesjVMd9BuBcvX9RLs-2md/view?usp=sharing" target="_blank" rel="noopener noreferrer" class="achievement-card-link" style="text-decoration:none;color:inherit;display:block;">';
     html += '<div class="achievement-card">';
     html += '<div class="achievement-icon"><i class="bi bi-trophy-fill"></i></div>';
     html += '<div class="achievement-title">National Mathematics Day — Quiz Competition Winner</div>';
     html += '<div class="achievement-desc">Captured 1st Rank in Quiz Competition, National Mathematics Day 2023, awarded by Solapur University.</div>';
-    html += '</div></div>';
+    html += '<div class="achievement-verify-hint"><i class="bi bi-box-arrow-up-right me-1"></i>View Certificate</div>';
+    html += '</div>';
+    html += '</a>';
+    html += '</div>';
     container.innerHTML = html;
 }
 
@@ -1520,7 +1524,7 @@ function renderResumePdf(container) {
     }
 
     // Configure PDF.js worker
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
 
     // Decode base64 to binary
     var binaryStr = atob(RESUME_BASE64);
