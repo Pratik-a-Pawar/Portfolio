@@ -1293,7 +1293,7 @@ function handleEmailReveal() {
                 if (cdBar)  cdBar.classList.add('active');
                 if (cdFill) cdFill.style.width = '100%';
 
-                var duration  = 9000;
+                var duration  = 11904;
                 var startTime = Date.now();
 
                 btn._countInterval = setInterval(function () {
