@@ -3107,3 +3107,45 @@ section.section-padding.glow-active {
 .achievement-card-link:focus .achievement-verify-hint {
     opacity: 1;
 }
+
+/* ============================================
+   CERTIFICATION & ACHIEVEMENT VERIFY HINTS
+   ============================================ */
+.cert-verify-hint,
+.achievement-verify-hint {
+    font-size: 0.75rem;
+    color: var(--accent-blue, #3b82f6);
+    margin-top: 8px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.cert-card:hover .cert-verify-hint,
+.cert-card-link:focus .cert-verify-hint,
+.achievement-card:hover .achievement-verify-hint,
+.achievement-card-link:focus .achievement-verify-hint {
+    opacity: 1;
+}
+
+/* ============================================
+   RESUME CANVAS PROTECTION
+   ============================================ */
+.resume-page-wrapper {
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    -webkit-touch-callout: none;
+}
+.resume-page-wrapper canvas {
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+@media print {
+    #resumeModal,
+    #resumeModalBody,
+    #resumeContent,
+    .resume-page-wrapper {
+        display: none !important;
+    }
+}
