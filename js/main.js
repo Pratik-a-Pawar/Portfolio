@@ -316,7 +316,6 @@ document.addEventListener('DOMContentLoaded', function () {
         initScrollReveal,
         initSectionScanEffect,
         initScrollProgress,
-        initScrollParticles,
         initHeroTyping,
         initTerminalAnimation,
         initTriageDemo,
@@ -953,123 +952,6 @@ function initScrollProgress() {
     updateProgress();
 }
 
-/** Scroll-triggered particle burst system — glowing cyber particles emit from sections entering view */
-function initScrollParticles() {
-    var canvas = document.getElementById('scrollParticleCanvas');
-    if (!canvas) return;
-
-    /* Respect prefers-reduced-motion */
-    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        canvas.style.display = 'none';
-        return;
-    }
-
-    var ctx = canvas.getContext('2d');
-    var particles = [];
-    var animationId = null;
-    var isRunning = false;
-
-    function resize() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-    }
-    resize();
-    window.addEventListener('resize', resize);
-
-    var colors = [
-        'rgba(56, 189, 248, ',   /* cyan */
-        'rgba(99, 102, 241, ',   /* indigo */
-        'rgba(139, 92, 246, ',   /* violet */
-        'rgba(245, 158, 11, '    /* amber */
-    ];
-
-    function Particle(x, y) {
-        this.x = x;
-        this.y = y;
-        this.vx = (Math.random() - 0.5) * 3;
-        this.vy = -Math.random() * 2.5 - 0.5;
-        this.life = 1;
-        this.decay = 0.008 + Math.random() * 0.012;
-        this.size = Math.random() * 3 + 1;
-        this.color = colors[Math.floor(Math.random() * colors.length)];
-    }
-
-    Particle.prototype.update = function () {
-        this.x += this.vx;
-        this.y += this.vy;
-        this.vy -= 0.01; /* slight upward drift */
-        this.life -= this.decay;
-        this.size *= 0.995;
-    };
-
-    Particle.prototype.draw = function () {
-        if (this.life <= 0) return;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fillStyle = this.color + (this.life * 0.6) + ')';
-        ctx.fill();
-
-        /* Glow */
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size * 2.5, 0, Math.PI * 2);
-        ctx.fillStyle = this.color + (this.life * 0.15) + ')';
-        ctx.fill();
-    };
-
-    function spawnBurst(yPosition) {
-        var count = 15 + Math.floor(Math.random() * 10);
-        for (var i = 0; i < count; i++) {
-            var x = Math.random() * canvas.width;
-            /* Convert page Y to viewport Y */
-            var viewY = yPosition - window.scrollY;
-            if (viewY < 0 || viewY > canvas.height) viewY = canvas.height * 0.5;
-            particles.push(new Particle(x, viewY));
-        }
-        if (!isRunning) {
-            isRunning = true;
-            animate();
-        }
-    }
-
-    function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        for (var i = particles.length - 1; i >= 0; i--) {
-            particles[i].update();
-            particles[i].draw();
-            if (particles[i].life <= 0) {
-                particles.splice(i, 1);
-            }
-        }
-
-        if (particles.length > 0) {
-            animationId = requestAnimationFrame(animate);
-        } else {
-            isRunning = false;
-        }
-    }
-
-    /* Observe sections — emit particles when they enter view */
-    var sections = document.querySelectorAll('section.section-padding');
-    if (!('IntersectionObserver' in window) || !sections.length) return;
-
-    var particleObserver = new IntersectionObserver(function (entries) {
-        for (var i = 0; i < entries.length; i++) {
-            if (entries[i].isIntersecting) {
-                var rect = entries[i].target.getBoundingClientRect();
-                spawnBurst(entries[i].target.offsetTop);
-                particleObserver.unobserve(entries[i].target);
-            }
-        }
-    }, {
-        threshold: 0.15,
-        rootMargin: '0px'
-    });
-
-    for (var i = 0; i < sections.length; i++) {
-        particleObserver.observe(sections[i]);
-    }
-}
 
 /** Hero subtitle typing effect */
 function initHeroTyping() {
