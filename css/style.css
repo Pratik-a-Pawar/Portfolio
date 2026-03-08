@@ -3055,13 +3055,13 @@ section.section-padding.glow-active {
     -webkit-user-select: none !important;
     -moz-user-select: none !important;
     -ms-user-select: none !important;
-    user-select: none !important;
     -webkit-touch-callout: none;
+    user-select: none !important;
 }
 .resume-page-wrapper canvas {
     pointer-events: none;
-    user-select: none;
     -webkit-user-select: none;
+    user-select: none;
 }
 #resumeContent {
     -webkit-print-color-adjust: exact;
@@ -3116,16 +3116,16 @@ section.section-padding.glow-active {
    RESUME CANVAS PROTECTION
    ============================================ */
 .resume-page-wrapper {
-    user-select: none !important;
     -webkit-user-select: none !important;
     -moz-user-select: none !important;
     -ms-user-select: none !important;
+    user-select: none !important;
     -webkit-touch-callout: none;
 }
 .resume-page-wrapper canvas {
     pointer-events: none;
-    user-select: none;
     -webkit-user-select: none;
+    user-select: none;
 }
 @media print {
     #resumeModal,
